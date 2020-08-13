@@ -9,13 +9,6 @@ all: bin/build/analysis.o bin/build/simulation.o bin/build/config.o bin/build/co
 
 # alla fine 
 
-bin/trajectories: bin/build/config.o bin/build/config-setup.o bin/build/output.o bin/build/beam.o bin/build/trajectories.o
-	$(CC) -o bin/trajectories bin/build/config.o bin/build/config-setup.o bin/build/output.o bin/build/beam.o bin/build/trajectories.o $(LDFLAGS)
-
-bin/trajectories-reader: bin/build/config.o bin/build/config-setup.o bin/build/output.o bin/build/beam.o bin/build/trajectories-reader.o
-	$(CC) -o bin/trajectories-reader bin/build/config.o bin/build/config-setup.o bin/build/output.o bin/build/beam.o bin/build/trajectories-reader.o $(LDFLAGS)
-
-
 bin/build/config.o: src/config.cpp src/config.h  src/datatype.h src/output.cpp src/output.h
 	$(CC) $(CXXFLAGS) -c -o bin/build/config.o src/config.cpp
 
@@ -33,12 +26,6 @@ bin/build/simulation.o: src/simulation.cpp src/datatype.h
 
 bin/build/analysis.o: src/analysis.cpp src/datatype.h
 	$(CC) $(CXXFLAGS) -c -o bin/build/analysis.o src/analysis.cpp
-
-bin/build/trajectories.o: src/trajectories.cpp src/datatype.h
-	$(CC) $(CXXFLAGS) -c -o bin/build/trajectories.o src/trajectories.cpp
-
-bin/build/trajectories-reader.o: src/trajectories-reader.cpp src/datatype.h
-	$(CC) $(CXXFLAGS) -c -o bin/build/trajectories-reader.o src/trajectories-reader.cpp
 
 
 # ecr: ecr.o
