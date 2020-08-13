@@ -4,6 +4,7 @@ ibsimu_client-workspace.code-workspace
 /bin/
 /simu*/
 /example-*/
+/sandbox/
 
 # Prerequisites
 *.d
