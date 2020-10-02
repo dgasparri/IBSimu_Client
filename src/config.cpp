@@ -47,17 +47,19 @@ ibsimu_client::parameters_commandline_t* ic_config::parameters_commandline_m(int
         ("config-file", bpo::value<std::string>()->default_value(""), "configuration file, path relative to executable")
         ;
 
-    if(is_simulation) 
+    if(is_simulation) {
         ibsimu_client::output::output_options_m(command_line_options_o);
+        // ibsimu_client::output_console::output_console_options_m(command_line_options_o);
         /*command_line_options_o.add_options()
             ("run-output", bpo::value<std::string>()->default_value("OUT_NORMAL"), "output files generated in the run [OUT_NORMAL (default, only final files), OUT_EVOLUTION (every 10 loops and last), OUT_BEGIN (first 3 loops and final), OUT_VERBOSE (first 3, every 10 loops and last)]")
             ("loop-output", bpo::value<std::string>()->default_value("LOOP_END"), "output files generated in the loop [LOOP_END (default, only at the end of the loop), LOOP_VERBOSE (every step of the loop)]")
         ;*/ 
-    else
+    } else {
         command_line_options_o.add_options()
             ("epot-file", bpo::value<std::string>()->default_value(""), "epot file, path relative to executable [REQUIRED]")
             ("pdb-file", bpo::value<std::string>()->default_value(""), "pdb file, path relative to executable [REQUIRED]")
         ;
+    }
 
     
     //Prints help
@@ -100,6 +102,8 @@ bpo::variables_map* ic_config::parameters_configfile_m(std::string config_filena
     
         ("ibsimu-cores", bpo::value<int>(), "Number of processor cores to use")
         ("number-of-rounds", bpo::value<int>()->default_value(50), "Number of rounds")
+        ("display-console", bpo::value<bool>(), "Display console at end, set false for batch simulation [TRUE]")
+
         ("ibsimu-message-threshold", bpo::value<std::string>(), "Output message threshold [MSG_VERBOSE]")
         ("ibsimu-file-emittance-statistics", bpo::value<std::string>(), "Filename to write emittance statistics to")
         

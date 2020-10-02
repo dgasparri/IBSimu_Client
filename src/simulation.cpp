@@ -22,6 +22,7 @@
 #include "config-setup.h"
 #include "beam.h"
 #include "output.h"
+#include "output_console.h"
 
 
 namespace ic = ibsimu_client;
@@ -29,6 +30,7 @@ namespace ic_config = ibsimu_client::config;
 namespace ic_setup = ibsimu_client::setup;
 namespace ic_beam = ibsimu_client::beam;
 namespace ic_output = ibsimu_client::output;
+namespace ic_output_console = ibsimu_client::output_console;
 
 
 
@@ -45,6 +47,7 @@ void simulation(
     std::ofstream& emittance_csv_stream_o,
     std::ofstream& timelaps_o,
     ic_beam::add_2d_beams_mt add_2b_beam_m,
+    ic_output_console::output_console_m_t output_console_m,
     const int n_rounds 
      )
 {
@@ -53,15 +56,15 @@ void simulation(
     //exit(0);
     std::cout<<"After mesh"<<std::endl;
 
-    EpotField epot( geometry_o );
+    EpotField epot_o( geometry_o );
     MeshScalarField scharge( geometry_o );
     MeshScalarField scharge_ave( geometry_o );
 
-    EpotEfield efield( epot );
+    EpotEfield efield_o( epot_o );
     field_extrpl_e extrapl[6] = { FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE,
 				  FIELD_SYMMETRIC_POTENTIAL, FIELD_EXTRAPOLATE,
 				  FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE };
-    efield.set_extrapolation( extrapl );
+    efield_o.set_extrapolation( extrapl );
   
     EpotBiCGSTABSolver solver( geometry_o );
     
@@ -88,11 +91,11 @@ void simulation(
         
     
 
-    ParticleDataBaseCyl pdb( geometry_o );
+    ParticleDataBaseCyl pdb_o( geometry_o );
     bool pmirror[6] = {false, false,
 		       true, false,
 		       false, false};
-    pdb.set_mirror( pmirror );
+    pdb_o.set_mirror( pmirror );
 
     
     std::chrono::time_point<std::chrono::system_clock> start, end;
@@ -104,13 +107,13 @@ void simulation(
         start = std::chrono::system_clock::now();
 
         emittance_csv_stream_o << a << ",";
-        save_output_m(a,"A.init", epot, pdb);
+        save_output_m(a,"A.init", epot_o, pdb_o);
 
         ibsimu.message(1) << "Major cycle " << a << "\n";
         ibsimu.message(1) << "-----------------------\n";
 
         if( a == 1 ) {
-            double electron_charge_density_rhoe = pdb.get_rhosum();
+            double electron_charge_density_rhoe = pdb_o.get_rhosum();
             solver.set_pexp_plasma( 
                 electron_charge_density_rhoe, 
                 phy_params_o.electron_temperature_Te, 
@@ -118,30 +121,30 @@ void simulation(
         }
 
 
-        solver.solve( epot, scharge_ave );
+        solver.solve( epot_o, scharge_ave );
         if( solver.get_iter() == 0 ) {
             ibsimu.message(1) << "No iterations, breaking major cycle\n";
             break;
         }
 
-        save_output_m(a,"B.aftersolver", epot, pdb);
+        save_output_m(a,"B.aftersolver", epot_o, pdb_o);
 
-        efield.recalculate();
+        efield_o.recalculate();
 
-        save_output_m(a,"C.afterefieldrecalculate", epot, pdb);
+        save_output_m(a,"C.afterefieldrecalculate", epot_o, pdb_o);
 
 
-        pdb.clear();
+        pdb_o.clear();
 
-        save_output_m(a,"D.afterpdbclear", epot, pdb);
+        save_output_m(a,"D.afterpdbclear", epot_o, pdb_o);
 
-        add_2b_beam_m(pdb);
+        add_2b_beam_m(pdb_o);
 
-        save_output_m(a,"E.afteraddbeam", epot, pdb);
+        save_output_m(a,"E.afteraddbeam", epot_o, pdb_o);
 
-        pdb.iterate_trajectories( scharge, efield, bfield_o );
+        pdb_o.iterate_trajectories( scharge, efield_o, bfield_o );
 
-        save_output_m(a,"F.aftertrajectories", epot, pdb);
+        save_output_m(a,"F.aftertrajectories", epot_o, pdb_o);
         
         TrajectoryDiagnosticData tdata;
         std::vector<trajectory_diagnostic_e> diag;
@@ -149,7 +152,7 @@ void simulation(
         diag.push_back( DIAG_RP );
         diag.push_back( DIAG_AP );
         diag.push_back( DIAG_CURR );
-        pdb.trajectories_at_plane( 
+        pdb_o.trajectories_at_plane( 
                 tdata, 
                 AXIS_X, 
                 geometry_o.max(0), 
@@ -181,7 +184,7 @@ void simulation(
         diag.clear();
         tdata.clear();
         diag.push_back( DIAG_CURR );
-        pdb.trajectories_at_plane( tdata, AXIS_X, 0.001, diag );
+        pdb_o.trajectories_at_plane( tdata, AXIS_X, 0.001, diag );
 
         const int num_traj_begin = tdata(0).size();
         const std::vector<double>& IQ_begin_o = tdata(0).data();
@@ -218,27 +221,21 @@ void simulation(
         
     }
     timelaps_o.close();
-    save_output_m(-1,"", epot, pdb);
+    save_output_m(-1,"", epot_o, pdb_o);
 
-    MeshScalarField tdens( geometry_o );
-    pdb.build_trajectory_density_field( tdens );
+    MeshScalarField tdens_o( geometry_o );
+    pdb_o.build_trajectory_density_field( tdens_o );
     
     
     delete(initial_plasma_op[0]); //Safe to delete nullptr
     delete(initial_plasma_op[1]);
     delete(initial_plasma_op[2]);
 
-    int temp_a = 1;
-    GTKPlotter plotter( &temp_a, nullptr );
-    plotter.set_geometry( &geometry_o );
-    plotter.set_epot( &epot );
-    plotter.set_efield( &efield );
-	plotter.set_bfield( &bfield_o );
-    plotter.set_trajdens( &tdens );
-    plotter.set_particledatabase( &pdb );
-    plotter.new_geometry_plot_window();
-    plotter.run();
-
+    output_console_m(
+        epot_o,
+        efield_o,
+        tdens_o,
+        pdb_o);
 
 }
 
@@ -299,8 +296,16 @@ int main(int argc, char *argv[])
         const std::string& prefix_epot_o = (*params_op)["ibsimu-file-prefix-epot"]    .as<std::string>();
         const std::string& prefix_pdb_o  = (*params_op)["ibsimu-file-prefix-pdb"]     .as<std::string>();
 
+        try {
+            boost::program_options::variable_value ab = (*params_op)["display-console"];
+            const bool abc = ab.as<bool>();
+        } catch (const std::exception& e) {
+            std::cout << e.what() << std::endl;
+            return 1;
+        }
+        
 
-       ic_output::output_m_t output_m = ic_output::output_factory_m(
+        ic_output::output_m_t output_m = ic_output::output_factory_m(
             lbd_run_o,
             lbd_run_output,
             lbd_loop_output,
@@ -310,6 +315,13 @@ int main(int argc, char *argv[])
             geometry_op
 
        );
+
+       ic_output_console::output_console_m_t output_console_m =
+            ic_output_console::output_console_factory_m(
+                (*params_op)["display-console"].as<bool>(),
+                *geometry_op,
+                *bfield_op
+            );
 
         const std::string& stats_filename_o = (*params_op)["ibsimu-file-emittance-statistics"].as<std::string>();
         std::string fullpath_stats_filename_o;
@@ -342,6 +354,7 @@ int main(int argc, char *argv[])
             emittance_csv,
             timing_o,
             add_2b_beam_m,
+            output_console_m,
             (*params_op)["number-of-rounds"].as<int>()
             );
     	

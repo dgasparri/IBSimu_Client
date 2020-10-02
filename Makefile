@@ -3,9 +3,9 @@ LDFLAGS = `pkg-config --libs ibsimu-1.0.6dev` -lboost_program_options
 CXXFLAGS = -lboost_program_options -Wall -g `pkg-config --cflags ibsimu-1.0.6dev` 
 
 
-all: bin/build/analysis.o bin/build/simulation.o bin/build/config.o bin/build/config-setup.o bin/build/output.o bin/build/beam.o
-	$(CC) -o bin/simulation bin/build/config.o bin/build/config-setup.o bin/build/output.o bin/build/beam.o bin/build/simulation.o $(LDFLAGS)
-	$(CC) -o bin/analysis bin/build/config.o bin/build/config-setup.o bin/build/output.o bin/build/analysis.o $(LDFLAGS)
+all: bin/build/analysis.o bin/build/simulation.o bin/build/config.o bin/build/config-setup.o bin/build/output.o bin/build/output_console.o bin/build/beam.o
+	$(CC) -o bin/simulation bin/build/config.o bin/build/config-setup.o bin/build/output.o bin/build/output_console.o bin/build/beam.o bin/build/simulation.o $(LDFLAGS)
+	$(CC) -o bin/analysis bin/build/config.o bin/build/config-setup.o bin/build/output.o bin/build/output_console.o bin/build/analysis.o $(LDFLAGS)
 
 # alla fine 
 
@@ -17,6 +17,10 @@ bin/build/config-setup.o: src/config-setup.cpp src/config-setup.h src/beam.h src
 
 bin/build/output.o: src/output.cpp src/output.h
 	$(CC) $(CXXFLAGS) -c -o bin/build/output.o src/output.cpp
+
+bin/build/output_console.o: src/output_console.cpp src/output_console.h
+	$(CC) $(CXXFLAGS) -c -o bin/build/output_console.o src/output_console.cpp
+
 
 bin/build/beam.o: src/beam.cpp src/beam.h src/datatype.h
 	$(CC) $(CXXFLAGS) -c -o bin/build/beam.o src/beam.cpp
