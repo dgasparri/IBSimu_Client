@@ -5,7 +5,7 @@ SRCDIR = src
 OBJDIR = bin/build
 #OBJECTS = $(OBJDIR)/%.o
 OBJECTS = bin/build/config.o bin/build/config-setup.o bin/build/output.o \
-          bin/build/beam.o
+          bin/build/beam.o $(OBJDIR)/output_console.o
 
 
 
@@ -25,6 +25,9 @@ bin/build/config-setup.o: src/config-setup.cpp src/config-setup.h src/beam.h src
 
 bin/build/output.o: src/output.cpp src/output.h
 	$(CC) $(CXXFLAGS) -c -o bin/build/output.o src/output.cpp
+
+$(OBJDIR)/output_console.o: $(SRCDIR)/output_console.cpp $(SRCDIR)/output_console.h
+	$(CC) $(CXXFLAGS) -c -o $(OBJDIR)/output_console.o $(SRCDIR)/output_console.cpp
 
 bin/build/beam.o: src/beam.cpp src/beam.h src/datatype.h
 	$(CC) $(CXXFLAGS) -c -o bin/build/beam.o src/beam.cpp
