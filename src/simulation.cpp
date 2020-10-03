@@ -47,7 +47,7 @@ void simulation(
     std::ofstream& emittance_csv_stream_o,
     std::ofstream& timelaps_o,
     ic_beam::add_2d_beams_mt add_2b_beam_m,
-    ic_output_console::output_console_m_t output_console_m,
+//    ic_output_console::output_console_m_t output_console_m,
     const int n_rounds 
      )
 {
@@ -230,13 +230,13 @@ void simulation(
     delete(initial_plasma_op[0]); //Safe to delete nullptr
     delete(initial_plasma_op[1]);
     delete(initial_plasma_op[2]);
-
+/*
     output_console_m(
         epot_o,
         efield_o,
         tdens_o,
         pdb_o);
-
+*/
 }
 
 
@@ -296,14 +296,7 @@ int main(int argc, char *argv[])
         const std::string& prefix_epot_o = (*params_op)["ibsimu-file-prefix-epot"]    .as<std::string>();
         const std::string& prefix_pdb_o  = (*params_op)["ibsimu-file-prefix-pdb"]     .as<std::string>();
 
-        try {
-            boost::program_options::variable_value ab = (*params_op)["display-console"];
-            const bool abc = ab.as<bool>();
-        } catch (const std::exception& e) {
-            std::cout << e.what() << std::endl;
-            return 1;
-        }
-        
+       
 
         ic_output::output_m_t output_m = ic_output::output_factory_m(
             lbd_run_o,
@@ -316,9 +309,17 @@ int main(int argc, char *argv[])
 
        );
 
+
+        const bool display_console = 
+                (*params_op)["display-console"].as<bool>();
+        if (display_console) 
+            std::cout << "Displaying the console at the end" << std::endl;
+        else
+            std::cout << "Not displaying the console at the end" << std::endl;            
+
        ic_output_console::output_console_m_t output_console_m =
             ic_output_console::output_console_factory_m(
-                (*params_op)["display-console"].as<bool>(),
+                display_console,
                 *geometry_op,
                 *bfield_op
             );
@@ -354,15 +355,21 @@ int main(int argc, char *argv[])
             emittance_csv,
             timing_o,
             add_2b_beam_m,
-            output_console_m,
+//            output_console_m,
             (*params_op)["number-of-rounds"].as<int>()
             );
     	
         emittance_csv.close();
 
-    } catch( Error e ) {
-	    e.print_error_message( ibsimu.message(0) );
+    } catch (const std::exception& e) {
+        std::cout << e.what() << std::endl;
+        return 1;
     }
+    
+
+    //catch( Error e ) {
+	//    e.print_error_message( ibsimu.message(0) );
+    //}
 
 
 }

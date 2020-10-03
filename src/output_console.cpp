@@ -15,7 +15,6 @@ void ic_output_console::output_console_options_m(
 }
 */
 
-
 ic_output_console::output_console_m_t ic_output_console::output_console_factory_m(
     const bool display_console,
     Geometry& geometry_o,
