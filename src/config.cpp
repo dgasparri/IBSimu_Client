@@ -49,11 +49,6 @@ ibsimu_client::parameters_commandline_t* ic_config::parameters_commandline_m(int
 
     if(is_simulation) {
         ibsimu_client::output::output_options_m(command_line_options_o);
-        // ibsimu_client::output_console::output_console_options_m(command_line_options_o);
-        /*command_line_options_o.add_options()
-            ("run-output", bpo::value<std::string>()->default_value("OUT_NORMAL"), "output files generated in the run [OUT_NORMAL (default, only final files), OUT_EVOLUTION (every 10 loops and last), OUT_BEGIN (first 3 loops and final), OUT_VERBOSE (first 3, every 10 loops and last)]")
-            ("loop-output", bpo::value<std::string>()->default_value("LOOP_END"), "output files generated in the loop [LOOP_END (default, only at the end of the loop), LOOP_VERBOSE (every step of the loop)]")
-        ;*/ 
     } else {
         command_line_options_o.add_options()
             ("epot-file", bpo::value<std::string>()->default_value(""), "epot file, path relative to executable [REQUIRED]")

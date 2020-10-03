@@ -17,7 +17,6 @@
 
 #include "datatype.h"
 #include "output.h"
-#include "output_console.h"
 
 #include <string>
 #include <vector>
