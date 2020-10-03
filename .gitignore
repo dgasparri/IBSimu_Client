@@ -1,5 +1,6 @@
 # IBSimu_client
 
+.vscode/
 ibsimu_client.code-workspace
 .vscode/
 /bin/
