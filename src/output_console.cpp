@@ -22,8 +22,8 @@ ic_output_console::output_console_m_t ic_output_console::output_console_factory_
 {
     return [
         display_console,
-        geometry_o,
-        bfield_o
+        &geometry_o,
+        &bfield_o
         ](
             EpotField& epot_o,
             EpotEfield& efield_o,

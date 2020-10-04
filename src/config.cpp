@@ -97,7 +97,7 @@ bpo::variables_map* ic_config::parameters_configfile_m(std::string config_filena
     
         ("ibsimu-cores", bpo::value<int>(), "Number of processor cores to use")
         ("number-of-rounds", bpo::value<int>()->default_value(50), "Number of rounds")
-        ("display-console", bpo::value<bool>(), "Display console at end, set false for batch simulation [TRUE]")
+        ("display-console", bpo::value<bool>()->default_value(true), "Display console at end, set false for batch simulation [TRUE]")
 
         ("ibsimu-message-threshold", bpo::value<std::string>(), "Output message threshold [MSG_VERBOSE]")
         ("ibsimu-file-emittance-statistics", bpo::value<std::string>(), "Filename to write emittance statistics to")

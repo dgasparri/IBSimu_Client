@@ -47,7 +47,7 @@ void simulation(
     std::ofstream& emittance_csv_stream_o,
     std::ofstream& timelaps_o,
     ic_beam::add_2d_beams_mt add_2b_beam_m,
-//    ic_output_console::output_console_m_t output_console_m,
+    ic_output_console::output_console_m_t output_console_m,
     const int n_rounds 
      )
 {
@@ -230,13 +230,13 @@ void simulation(
     delete(initial_plasma_op[0]); //Safe to delete nullptr
     delete(initial_plasma_op[1]);
     delete(initial_plasma_op[2]);
-/*
+
     output_console_m(
         epot_o,
         efield_o,
         tdens_o,
         pdb_o);
-*/
+
 }
 
 
@@ -317,13 +317,14 @@ int main(int argc, char *argv[])
         else
             std::cout << "Not displaying the console at the end" << std::endl;            
 
-       ic_output_console::output_console_m_t output_console_m =
+        
+        ic_output_console::output_console_m_t output_console_m =
             ic_output_console::output_console_factory_m(
                 display_console,
                 *geometry_op,
                 *bfield_op
             );
-
+        
         const std::string& stats_filename_o = (*params_op)["ibsimu-file-emittance-statistics"].as<std::string>();
         std::string fullpath_stats_filename_o;
         if(stats_filename_o[0]=='/')
@@ -355,7 +356,7 @@ int main(int argc, char *argv[])
             emittance_csv,
             timing_o,
             add_2b_beam_m,
-//            output_console_m,
+            output_console_m,
             (*params_op)["number-of-rounds"].as<int>()
             );
     	
