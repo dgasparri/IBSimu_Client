@@ -145,7 +145,10 @@ void simulation(
         pdb_o.iterate_trajectories( scharge, efield_o, bfield_o );
 
         save_output_m(a,"F.aftertrajectories", epot_o, pdb_o);
-        
+
+
+/* begin particle_diagnostics
+
         TrajectoryDiagnosticData tdata;
         std::vector<trajectory_diagnostic_e> diag;
         diag.push_back( DIAG_R );
@@ -202,6 +205,12 @@ void simulation(
 
         emittance_csv_stream_o << std::endl;
         emittance_csv_stream_o.flush();
+
+end particle_diagnostics
+
+*/
+
+
 
         if( a == 0 ) {
             scharge_ave = scharge;
