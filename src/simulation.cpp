@@ -45,11 +45,11 @@ void simulation(
     MeshVectorField &bfield_o, 
     ic::physics_parameters_t &phy_params_o,
     ic_output::output_m_t save_output_m,
-    //std::ofstream& emittance_csv_stream_o,
     std::ofstream& timelaps_o,
     ic_beam::add_2d_beams_mt add_2b_beam_m,
     ic_output_console::output_console_m_t output_console_m,
-    ic_pd::particle_diagnostics_m_t particle_diagnostics_m,
+    ic_pd::loop_start_m_t diagnostics_loop_start_m,
+    ic_pd::loop_end_m_t diagnostics_loop_end_m,
     const int n_rounds 
      )
 {
@@ -108,7 +108,8 @@ void simulation(
 
         start = std::chrono::system_clock::now();
 
-        //emittance_csv_stream_o << a << ",";
+        diagnostics_loop_start_m(a);
+
         save_output_m(a,"A.init", epot_o, pdb_o);
 
         ibsimu.message(1) << "Major cycle " << a << "\n";
@@ -321,11 +322,15 @@ int main(int argc, char *argv[])
        );
 
         std::ofstream &diagnostics_file_o = ic_pd::diagnostics_stream_open_m(*params_op, cmdlp_op->run_o);
-        ic_pd::particle_diagnostics_m_t particle_diagnostics_m = 
+        ic_pd::loop_start_m_t diagnostics_loop_start_m = 
+            ic_pd::loop_start_factory_m(
+                (*params_op),
+                diagnostics_file_o
+            );
+        ic_pd::loop_end_m_t diagnostics_loop_end_m = 
             ic_pd::particle_diagnostics_factory_m(
                 (*params_op),
-                diagnostics_file_o,
-                (*geometry_op)
+                diagnostics_file_o
             );
 
 
@@ -365,7 +370,8 @@ int main(int argc, char *argv[])
             timing_o,
             add_2b_beam_m,
             output_console_m,
-            particle_diagnostics_m,
+            diagnostics_loop_start_m,
+            diagnostics_loop_end_m,
             (*params_op)["number-of-rounds"].as<int>()
             );
     	

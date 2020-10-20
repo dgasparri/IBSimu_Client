@@ -33,31 +33,35 @@ std::ofstream& ic_pd::diagnostics_stream_open_m(bpo::variables_map &params_op, s
     return *csv_op;
 }
 
+ic_pd::loop_start_m_t 
+    ic_pd::loop_start_factory_m(
+        bpo::variables_map &params_op,
+        std::ofstream& diagnostics_stream_o
+)
+{
+    return [
+        &diagnostics_stream_o
+    ](int loop_n) {
+        diagnostics_stream_o << loop_n;
+    };
+}
 
-ic_pd::particle_diagnostics_m_t 
+
+
+
+ic_pd::loop_end_m_t 
     ic_pd::particle_diagnostics_factory_m(
         bpo::variables_map& params_op,
-        std::ofstream& diagnostics_stream_o,
-        Geometry& geometry_o
-        /*
-            const bool display_console,
-            Geometry& geometry_o,
-            MeshVectorField& bfield_o
-            */
+        std::ofstream& diagnostics_stream_o
    )
 {
-    /*
+    
     return [
-        /*
-        display_console,
-        &geometry_o,
-        &bfield_o
-        * /
+        &params_op,
+        &diagnostics_stream_o
         ](
-            EpotField& epot_o,
-            EpotEfield& efield_o,
-            MeshScalarField& tdens_o,
-            ParticleDataBaseCyl& pdb_o
+            int loop_n
+            // ParticleDataBaseCyl& pdb_o
         ) {
            /*
             if (!display_console) return;
@@ -129,8 +133,7 @@ ic_pd::particle_diagnostics_m_t
 
             emittance_csv_stream_o << std::endl;
             emittance_csv_stream_o.flush();
-            * /
+            */
         };
     
-    */
 }
