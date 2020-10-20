@@ -36,8 +36,9 @@ std::ofstream& ic_pd::diagnostics_stream_open_m(bpo::variables_map &params_op, s
 
 ic_pd::particle_diagnostics_m_t 
     ic_pd::particle_diagnostics_factory_m(
-        //bpo::variables_map &params_op,
-        //std::ofstream &diagnostics_stream_o
+        bpo::variables_map& params_op,
+        std::ofstream& diagnostics_stream_o,
+        Geometry& geometry_o
         /*
             const bool display_console,
             Geometry& geometry_o,

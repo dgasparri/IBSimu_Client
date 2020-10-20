@@ -32,8 +32,9 @@ namespace ibsimu_client::particle_diagnostics {
 
 
     particle_diagnostics_m_t particle_diagnostics_factory_m(
-        //bpo::variables_map &params_op,
-        //std::ofstream &diagnostics_stream_o
+        bpo::variables_map &params_op,
+        std::ofstream &diagnostics_stream_o,
+        Geometry& geometry_o
         /*
         const bool display_console,
         Geometry& geometry_o,

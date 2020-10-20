@@ -323,8 +323,9 @@ int main(int argc, char *argv[])
         std::ofstream &diagnostics_file_o = ic_pd::diagnostics_stream_open_m(*params_op, cmdlp_op->run_o);
         ic_pd::particle_diagnostics_m_t particle_diagnostics_m = 
             ic_pd::particle_diagnostics_factory_m(
-                //*params_op,
-                //diagnostics_file_o
+                (*params_op),
+                diagnostics_file_o,
+                (*geometry_op)
             );
 
 
