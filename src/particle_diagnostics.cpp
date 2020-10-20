@@ -7,6 +7,7 @@ void ic_pd::particle_diagnostics_options_m(
     bpo::options_description &command_line_options_o)
 {
         command_line_options_o.add_options()
+            ("ibsimu-beam-diagnostics-file", bpo::value<std::string>(), "Filename to write emittance statistics to")
             ("emission-x", bpo::value<std::string>()->default_value("OUT_NORMAL"), "emission x output files generated in the run [OUT_NORMAL (default, only final files), OUT_EVOLUTION (every 10 loops and last), OUT_BEGIN (first 3 loops and final), OUT_VERBOSE (first 3, every 10 loops and last)]")
             ("emission-y", bpo::value<std::string>()->default_value("LOOP_END"), "emission y output files generated in the loop [LOOP_END (default, only at the end of the loop), LOOP_VERBOSE (every step of the loop)]")
         ;
@@ -14,20 +15,43 @@ void ic_pd::particle_diagnostics_options_m(
 }
 
 
-ic_pd::particle_diagnostics_m_t ic_pd::particle_diagnostics_factory_m(
-/*
-    const bool display_console,
-    Geometry& geometry_o,
-    MeshVectorField& bfield_o
-    */
+std::ofstream& ic_pd::diagnostics_stream_open_m(bpo::variables_map &params_op, std::string fullpath)
+{
+
+    const std::string& stats_filename_o = 
+        params_op["ibsimu-beam-diagnostics-file"].as<std::string>();
+    std::string fullpath_stats_filename_o;
+    if(stats_filename_o[0]=='/')
+        fullpath_stats_filename_o = stats_filename_o;
+    else
+        fullpath_stats_filename_o = fullpath + stats_filename_o;
+
+    std::ofstream *csv_op = new std::ofstream(
+        fullpath_stats_filename_o, 
+        std::ios_base::out | std::ios_base::trunc );
+    
+    return *csv_op;
+}
+
+
+ic_pd::particle_diagnostics_m_t 
+    ic_pd::particle_diagnostics_factory_m(
+        //bpo::variables_map &params_op,
+        //std::ofstream &diagnostics_stream_o
+        /*
+            const bool display_console,
+            Geometry& geometry_o,
+            MeshVectorField& bfield_o
+            */
    )
 {
+    /*
     return [
         /*
         display_console,
         &geometry_o,
         &bfield_o
-        */
+        * /
         ](
             EpotField& epot_o,
             EpotEfield& efield_o,
@@ -104,8 +128,8 @@ ic_pd::particle_diagnostics_m_t ic_pd::particle_diagnostics_factory_m(
 
             emittance_csv_stream_o << std::endl;
             emittance_csv_stream_o.flush();
-            */
+            * /
         };
     
-
+    */
 }

@@ -21,6 +21,8 @@ namespace ibsimu_client::particle_diagnostics {
 
     void particle_diagnostics_options_m(
         bpo::options_description &command_line_options_o);
+    
+    std::ofstream& diagnostics_stream_open_m(bpo::variables_map &params_op, std::string fullpath);
 
     typedef std::function<void(
         EpotField&,
@@ -30,6 +32,8 @@ namespace ibsimu_client::particle_diagnostics {
 
 
     particle_diagnostics_m_t particle_diagnostics_factory_m(
+        //bpo::variables_map &params_op,
+        //std::ofstream &diagnostics_stream_o
         /*
         const bool display_console,
         Geometry& geometry_o,

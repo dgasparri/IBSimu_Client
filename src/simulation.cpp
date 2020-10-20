@@ -45,7 +45,7 @@ void simulation(
     MeshVectorField &bfield_o, 
     ic::physics_parameters_t &phy_params_o,
     ic_output::output_m_t save_output_m,
-    std::ofstream& emittance_csv_stream_o,
+    //std::ofstream& emittance_csv_stream_o,
     std::ofstream& timelaps_o,
     ic_beam::add_2d_beams_mt add_2b_beam_m,
     ic_output_console::output_console_m_t output_console_m,
@@ -108,7 +108,7 @@ void simulation(
 
         start = std::chrono::system_clock::now();
 
-        emittance_csv_stream_o << a << ",";
+        //emittance_csv_stream_o << a << ",";
         save_output_m(a,"A.init", epot_o, pdb_o);
 
         ibsimu.message(1) << "Major cycle " << a << "\n";
@@ -320,6 +320,13 @@ int main(int argc, char *argv[])
 
        );
 
+        std::ofstream &diagnostics_file_o = ic_pd::diagnostics_stream_open_m(*params_op, cmdlp_op->run_o);
+        ic_pd::particle_diagnostics_m_t particle_diagnostics_m = 
+            ic_pd::particle_diagnostics_factory_m(
+                //*params_op,
+                //diagnostics_file_o
+            );
+
 
         const bool display_console = 
                 (*params_op)["display-console"].as<bool>();
@@ -336,22 +343,6 @@ int main(int argc, char *argv[])
                 *bfield_op
             );
         
-        ic_pd::particle_diagnostics_m_t particle_diagnostics_m = 
-            ic_pd::particle_diagnostics_factory_m();
-
-
-
-
-        const std::string& stats_filename_o = (*params_op)["ibsimu-file-emittance-statistics"].as<std::string>();
-        std::string fullpath_stats_filename_o;
-        if(stats_filename_o[0]=='/')
-            fullpath_stats_filename_o = stats_filename_o;
-        else
-            fullpath_stats_filename_o = cmdlp_op->run_o + stats_filename_o;
-
-        std::ofstream emittance_csv(
-            fullpath_stats_filename_o, 
-            std::ios_base::out | std::ios_base::trunc );
 
         std::string fullpath_timing_filename_o;
         fullpath_timing_filename_o = cmdlp_op->run_o + "simulation-time.txt";
@@ -370,7 +361,6 @@ int main(int argc, char *argv[])
             *bfield_op, 
             phy_pars,
             output_m,
-            emittance_csv,
             timing_o,
             add_2b_beam_m,
             output_console_m,
@@ -378,7 +368,7 @@ int main(int argc, char *argv[])
             (*params_op)["number-of-rounds"].as<int>()
             );
     	
-        emittance_csv.close();
+        diagnostics_file_o.close();
 
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;

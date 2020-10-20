@@ -101,7 +101,7 @@ bpo::variables_map* ic_config::parameters_configfile_m(std::string config_filena
         ("display-console", bpo::value<bool>()->default_value(true), "Display console at end, set false for batch simulation [TRUE]")
 
         ("ibsimu-message-threshold", bpo::value<std::string>(), "Output message threshold [MSG_VERBOSE]")
-        ("ibsimu-file-emittance-statistics", bpo::value<std::string>(), "Filename to write emittance statistics to")
+
         
 
         ("ibsimu-file-prefix-geometry", bpo::value<std::string>()->default_value("geom"), "Prefix of file Geometry (.dat)")
