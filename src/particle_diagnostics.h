@@ -25,8 +25,8 @@ namespace ibsimu_client::particle_diagnostics {
     std::ofstream& diagnostics_stream_open_m(bpo::variables_map &params_op, std::string fullpath);
 
     typedef std::function<void(
-        int
-        //,   ParticleDataBaseCyl&
+        int,
+        ParticleDataBase&
         )> loop_end_m_t;
 
 

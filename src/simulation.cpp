@@ -149,7 +149,7 @@ void simulation(
 
         save_output_m(a,"F.aftertrajectories", epot_o, pdb_o);
 
-
+        diagnostics_loop_end_m(a, pdb_o);
 /* begin particle_diagnostics
 
         TrajectoryDiagnosticData tdata;

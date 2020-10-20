@@ -60,23 +60,9 @@ ic_pd::loop_end_m_t
         &params_op,
         &diagnostics_stream_o
         ](
-            int loop_n
-            // ParticleDataBaseCyl& pdb_o
+            int loop_n,
+            ParticleDataBase& pdb_o
         ) {
-           /*
-            if (!display_console) return;
-            int temp_a = 1;
-            GTKPlotter plotter( &temp_a, nullptr );
-            plotter.set_geometry( &geometry_o );
-            plotter.set_epot( &epot_o );
-            plotter.set_efield( &efield_o );
-            plotter.set_bfield( &bfield_o );
-            plotter.set_trajdens( &tdens_o );
-            plotter.set_particledatabase( &pdb_o );
-            plotter.new_geometry_plot_window();
-            plotter.run();
-            */
-           /*
             TrajectoryDiagnosticData tdata;
             std::vector<trajectory_diagnostic_e> diag;
             diag.push_back( DIAG_R );
@@ -86,7 +72,7 @@ ic_pd::loop_end_m_t
             pdb_o.trajectories_at_plane( 
                     tdata, 
                     AXIS_X, 
-                    geometry_o.max(0), 
+                    0.1, //geometry_o.max(0), 
                     diag );
             
             //Emittance statistics are from original data, not gridded data
@@ -99,9 +85,9 @@ ic_pd::loop_end_m_t
                     tdata(3).data()  //DIAG_CURR I
                     );
 
-            emittance_csv_stream_o << emit.alpha() << ",";
-            emittance_csv_stream_o << emit.beta() << ",";
-            emittance_csv_stream_o << emit.epsilon() << ",";
+            diagnostics_stream_o << "," << emit.alpha();
+            diagnostics_stream_o << "," << emit.beta();
+            diagnostics_stream_o << "," << emit.epsilon();
 
             const int num_traj_end = tdata(3).size();
             const std::vector<double>& IQ_end_o = tdata(3).data();
@@ -126,14 +112,14 @@ ic_pd::loop_end_m_t
             }
 
 
-            emittance_csv_stream_o << num_traj_begin << ",";
-            emittance_csv_stream_o << IQ_begin << ",";
-            emittance_csv_stream_o << num_traj_end << ",";
-            emittance_csv_stream_o << IQ_end << ",";
+            diagnostics_stream_o << "," << num_traj_begin;
+            diagnostics_stream_o << "," << IQ_begin;
+            diagnostics_stream_o << "," << num_traj_end;
+            diagnostics_stream_o << "," << IQ_end;
 
-            emittance_csv_stream_o << std::endl;
-            emittance_csv_stream_o.flush();
-            */
+            diagnostics_stream_o << std::endl;
+            diagnostics_stream_o.flush();
+
         };
     
 }
