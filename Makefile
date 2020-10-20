@@ -5,7 +5,7 @@ SRCDIR = src
 OBJDIR = bin/build
 #OBJECTS = $(OBJDIR)/%.o
 OBJECTS = bin/build/config.o bin/build/config-setup.o bin/build/output.o \
-          bin/build/beam.o $(OBJDIR)/output_console.o
+          bin/build/beam.o $(OBJDIR)/output_console.o $(OBJDIR)/particle_diagnostics.o
 
 
 
@@ -31,6 +31,9 @@ $(OBJDIR)/output_console.o: $(SRCDIR)/output_console.cpp $(SRCDIR)/output_consol
 
 bin/build/beam.o: src/beam.cpp src/beam.h src/datatype.h
 	$(CC) $(CXXFLAGS) -c -o bin/build/beam.o src/beam.cpp
+
+bin/build/particle_diagnostics.o: src/particle_diagnostics.cpp src/particle_diagnostics.h
+	$(CC) $(CXXFLAGS) -c -o bin/build/particle_diagnostics.o src/particle_diagnostics.cpp
 
 #bin/build/simulation.o: src/simulation.cpp src/datatype.h
 #	$(CC) $(CXXFLAGS) -c -o bin/build/simulation.o src/simulation.cpp

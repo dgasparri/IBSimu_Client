@@ -19,7 +19,9 @@ namespace bpo = boost::program_options;
 
 namespace ibsimu_client::particle_diagnostics {
 
-    
+    void particle_diagnostics_options_m(
+        bpo::options_description &command_line_options_o);
+
     typedef std::function<void(
         EpotField&,
         EpotEfield&,
@@ -28,9 +30,12 @@ namespace ibsimu_client::particle_diagnostics {
 
 
     particle_diagnostics_m_t particle_diagnostics_factory_m(
+        /*
         const bool display_console,
         Geometry& geometry_o,
-        MeshVectorField& bfield_o);
+        MeshVectorField& bfield_o
+        */
+        );
 
 
 }

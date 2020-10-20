@@ -49,6 +49,7 @@ ibsimu_client::parameters_commandline_t* ic_config::parameters_commandline_m(int
 
     if(is_simulation) {
         ibsimu_client::output::output_options_m(command_line_options_o);
+        ibsimu_client::particle_diagnostics::particle_diagnostics_options_m(command_line_options_o);
     } else {
         command_line_options_o.add_options()
             ("epot-file", bpo::value<std::string>()->default_value(""), "epot file, path relative to executable [REQUIRED]")

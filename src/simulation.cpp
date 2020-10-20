@@ -31,6 +31,7 @@ namespace ic_setup = ibsimu_client::setup;
 namespace ic_beam = ibsimu_client::beam;
 namespace ic_output = ibsimu_client::output;
 namespace ic_output_console = ibsimu_client::output_console;
+namespace ic_pd = ibsimu_client::particle_diagnostics;
 
 
 
@@ -48,6 +49,7 @@ void simulation(
     std::ofstream& timelaps_o,
     ic_beam::add_2d_beams_mt add_2b_beam_m,
     ic_output_console::output_console_m_t output_console_m,
+    ic_pd::particle_diagnostics_m_t particle_diagnostics_m,
     const int n_rounds 
      )
 {
@@ -334,6 +336,12 @@ int main(int argc, char *argv[])
                 *bfield_op
             );
         
+        ic_pd::particle_diagnostics_m_t particle_diagnostics_m = 
+            ic_pd::particle_diagnostics_factory_m();
+
+
+
+
         const std::string& stats_filename_o = (*params_op)["ibsimu-file-emittance-statistics"].as<std::string>();
         std::string fullpath_stats_filename_o;
         if(stats_filename_o[0]=='/')
@@ -366,6 +374,7 @@ int main(int argc, char *argv[])
             timing_o,
             add_2b_beam_m,
             output_console_m,
+            particle_diagnostics_m,
             (*params_op)["number-of-rounds"].as<int>()
             );
     	

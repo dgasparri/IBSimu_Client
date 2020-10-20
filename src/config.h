@@ -17,6 +17,7 @@
 
 #include "datatype.h"
 #include "output.h"
+#include "particle_diagnostics.h"
 
 #include <string>
 #include <vector>

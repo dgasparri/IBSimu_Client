@@ -7,24 +7,27 @@ void ic_pd::particle_diagnostics_options_m(
     bpo::options_description &command_line_options_o)
 {
         command_line_options_o.add_options()
-            ("run-output", bpo::value<std::string>()->default_value("OUT_NORMAL"), "output files generated in the run [OUT_NORMAL (default, only final files), OUT_EVOLUTION (every 10 loops and last), OUT_BEGIN (first 3 loops and final), OUT_VERBOSE (first 3, every 10 loops and last)]")
-            ("loop-output", bpo::value<std::string>()->default_value("LOOP_END"), "output files generated in the loop [LOOP_END (default, only at the end of the loop), LOOP_VERBOSE (every step of the loop)]")
+            ("emission-x", bpo::value<std::string>()->default_value("OUT_NORMAL"), "emission x output files generated in the run [OUT_NORMAL (default, only final files), OUT_EVOLUTION (every 10 loops and last), OUT_BEGIN (first 3 loops and final), OUT_VERBOSE (first 3, every 10 loops and last)]")
+            ("emission-y", bpo::value<std::string>()->default_value("LOOP_END"), "emission y output files generated in the loop [LOOP_END (default, only at the end of the loop), LOOP_VERBOSE (every step of the loop)]")
         ;
 
 }
 
 
-
-ic_particle_diagnostics::particle_diagnostics_m_t ic_output_console::output_console_factory_m(
-
+ic_pd::particle_diagnostics_m_t ic_pd::particle_diagnostics_factory_m(
+/*
     const bool display_console,
     Geometry& geometry_o,
-    MeshVectorField& bfield_o)
+    MeshVectorField& bfield_o
+    */
+   )
 {
     return [
+        /*
         display_console,
         &geometry_o,
         &bfield_o
+        */
         ](
             EpotField& epot_o,
             EpotEfield& efield_o,
