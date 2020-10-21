@@ -63,6 +63,8 @@ std::vector<std::string> ic_pd::diagnostic_parameters_vector_m(std::string input
             i = params.emplace(i+1, PD_N_PARTICLES);
         }
     }
+    
+    return params;
 }
 
 
@@ -102,7 +104,8 @@ ic_pd::loop_start_m_t
 
 
 
-std::optional<ic_pd::loop_end_m_t> 
+//std::optional<ic_pd::loop_end_m_t> 
+ic_pd::loop_end_optional_m_t
     ic_pd::particle_diagnostics_factory_m(
         bpo::variables_map& params_o,
         std::ofstream& diagnostics_stream_o

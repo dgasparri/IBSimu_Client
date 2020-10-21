@@ -327,7 +327,7 @@ int main(int argc, char *argv[])
                 (*params_op),
                 diagnostics_file_o
             );
-        ic_pd::loop_end_m_t diagnostics_loop_end_m = 
+        ic_pd::loop_end_optional_m_t diagnostics_loop_end_m = 
             ic_pd::particle_diagnostics_factory_m(
                 (*params_op),
                 diagnostics_file_o
@@ -371,7 +371,7 @@ int main(int argc, char *argv[])
             add_2b_beam_m,
             output_console_m,
             diagnostics_loop_start_m,
-            diagnostics_loop_end_m,
+            *diagnostics_loop_end_m,
             (*params_op)["number-of-rounds"].as<int>()
             );
     	

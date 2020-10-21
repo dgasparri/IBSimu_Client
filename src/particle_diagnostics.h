@@ -77,8 +77,9 @@ namespace ibsimu_client::particle_diagnostics {
         ParticleDataBase&
         )> loop_end_m_t;
 
+    typedef std::optional<loop_end_m_t> loop_end_optional_m_t;
 
-    std::optional<loop_end_m_t> particle_diagnostics_factory_m(
+    loop_end_optional_m_t particle_diagnostics_factory_m(
         bpo::variables_map &params_op,
         std::ofstream &diagnostics_stream_o
         /*
