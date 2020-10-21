@@ -11,9 +11,37 @@
 
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
+#include <boost/algorithm/string.hpp>
+
+#include <optional>
+#include <unordered_set>
+#include <string>
+#include <vector>
+#include <iostream>
+#include <numeric>
 
 #include "datatype.h"
 #include "config.h"
+
+#define PD_GRID_N 10 // grid NxM, was 100x100
+#define PD_GRID_M 10
+#define PD_AXIS_X "AXIS_X"
+#define PD_AXIS_Y "AXIX_Y"
+#define PD_AXIS_Z "AXIS_Z"
+#define PD_AXIS_R "AXIS_R"
+#define PD_ALL "ALL"
+#define PD_ALPHA"ALPHA"
+#define PD_ANGLE "ANGLE"
+#define PD_BETA "BETA"
+#define PD_EPSILON "EPSILON"
+#define PD_GAMMA "GAMMA"
+#define PD_RMAJOR "RMAJOR"
+#define PD_RMINOR "RMINOR"
+#define PD_X_AVERAGE "X_AVERAGE"
+#define PD_X_P_AVE "X_P_AVE"
+#define PD_I_TOT "I_TOT"
+#define PD_N_PARTICLES "N_PARTICLES"
+
 
 namespace bpo = boost::program_options;
 
@@ -22,6 +50,25 @@ namespace ibsimu_client::particle_diagnostics {
     void particle_diagnostics_options_m(
         bpo::options_description &command_line_options_o);
     
+    enum pd_extraction_parameters {
+        eAlpha,
+        eAngle,
+        eBeta,
+        eEpsilon,
+        eGamma,
+        eRmajor,
+        eRminor,
+        eXaverage,
+        eXpave,
+        eItot,
+        eNparticles,
+        eUnknown
+    };
+
+    pd_extraction_parameters hash_parameters(std::string param);
+
+    std::vector<std::string> diagnostic_parameters_vector_m(std::string input_string);
+
     std::ofstream& diagnostics_stream_open_m(bpo::variables_map &params_op, std::string fullpath);
 
     typedef std::function<void(
@@ -30,7 +77,7 @@ namespace ibsimu_client::particle_diagnostics {
         )> loop_end_m_t;
 
 
-    loop_end_m_t particle_diagnostics_factory_m(
+    std::optional<loop_end_m_t> particle_diagnostics_factory_m(
         bpo::variables_map &params_op,
         std::ofstream &diagnostics_stream_o
         /*
