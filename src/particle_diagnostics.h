@@ -19,6 +19,7 @@
 #include <vector>
 #include <iostream>
 #include <numeric>
+#include <execution>
 
 #include "datatype.h"
 #include "config.h"
@@ -30,7 +31,7 @@
 #define PD_AXIS_Z "AXIS_Z"
 #define PD_AXIS_R "AXIS_R"
 #define PD_ALL "ALL"
-#define PD_ALPHA"ALPHA"
+#define PD_ALPHA "ALPHA"
 #define PD_ANGLE "ANGLE"
 #define PD_BETA "BETA"
 #define PD_EPSILON "EPSILON"

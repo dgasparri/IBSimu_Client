@@ -221,14 +221,18 @@ std::optional<ic_pd::loop_end_m_t>
                             diagnostics_stream_o << "," << emit.rminor();
                             break;
                         case ic_pd::eItot:
-                            const std::vector<double>& IQ_end_o = tdata(3).data();
-                            const double iTot = std::reduce(std::execution::par, IQ_end_o.cbegin(),IQ_end_o.cend());
-                            diagnostics_stream_o << "," << iTot;
-                            break;
+                            {
+                                const std::vector<double>& IQ_end_o = tdata(3).data();
+                                const double iTot = std::reduce(std::execution::par, IQ_end_o.cbegin(),IQ_end_o.cend());
+                                diagnostics_stream_o << "," << iTot;
+                                break;
+                            }
                         case ic_pd::eNparticles:
-                            const size_t num_traj_end = tdata(3).size();
-                            diagnostics_stream_o << "," << num_traj_end;
-                            break;
+                            {
+                                const size_t num_traj_end = tdata(3).size();
+                                diagnostics_stream_o << "," << num_traj_end;
+                                break;
+                            }
                         default:
                             std::cout<<"Particle Diagnostics: parameter *" << param << "* unknown, ignoring it." << std::endl;
                     }
