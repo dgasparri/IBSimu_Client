@@ -361,6 +361,10 @@ int main(int argc, char *argv[])
         std::vector<ic_beam::beam_t> beams = ic_setup::beams_m(*params_op);
         ic_beam::add_2d_beams_mt add_2b_beam_m = ic_beam::add_2d_beams_helper_m(beams);
 
+        if(!diagnostics_loop_end_m) {
+            std::cout << "Error in the config file, aborting."<<std::endl;
+            return 0;
+        }
 
         simulation(
             *geometry_op, 
