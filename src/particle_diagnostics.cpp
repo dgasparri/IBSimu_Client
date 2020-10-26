@@ -34,7 +34,11 @@ ic_pd::pd_extraction_parameters ic_pd::hash_parameters(std::string param)
     return ic_pd::eUnknown;
 }
 
-
+/**
+ * 
+ * From comma separated list + "ALL" to the full parameter list
+ * 
+ */ 
 std::vector<std::string> ic_pd::diagnostic_parameters_vector_m(std::string input_string)
 {
     
@@ -79,7 +83,6 @@ std::optional<std::ofstream>& ic_pd::diagnostics_stream_open_m(bpo::variables_ma
     const std::optional<std::string> stats_filename_o = ic_bpo::get(params_o, "ibsimu-beam-diagnostics-file");
     if(!stats_filename_o) {
         std::cout << "Required key ibsimu-beam-diagnostics-file not found in config file." << std::endl;
-        std::cout << "Aborting." << std::endl;
         return std::nullopt;
     }
     std::string fullpath_stats_filename_o;
@@ -94,7 +97,6 @@ std::optional<std::ofstream>& ic_pd::diagnostics_stream_open_m(bpo::variables_ma
     
     if (!csv_op->good()) {
         std::cout << "Unable to open diagnostics file: " << fullpath_stats_filename_o << std::endl;
-        std::cout << "Aborting." << std::endl;
         return std::nullopt;
     }
 
@@ -170,7 +172,7 @@ ic_pd::loop_end_optional_m_t
     }
 
     return [
-        &params_o,
+        //&params_o,
         &diagnostics_stream_o,
         diag_at_loop,
         diag_axis,
