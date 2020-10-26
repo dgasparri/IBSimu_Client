@@ -23,7 +23,7 @@
 #include "beam.h"
 #include "output.h"
 #include "output_console.h"
-#include "bpo_interface.h"
+#include "bpo_interface.hpp"
 
 
 namespace ic = ibsimu_client;
