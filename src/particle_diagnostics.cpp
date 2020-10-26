@@ -2,6 +2,7 @@
 
 
 namespace ic_pd = ibsimu_client::particle_diagnostics;
+namespace ic_bpo = ibsimu_client::bpo_interface;
 
 void ic_pd::particle_diagnostics_options_m(
     bpo::options_description &command_line_options_o)
@@ -70,21 +71,33 @@ std::vector<std::string> ic_pd::diagnostic_parameters_vector_m(std::string input
 
 
 
-std::ofstream& ic_pd::diagnostics_stream_open_m(bpo::variables_map &params_op, std::string fullpath)
+std::optional<std::ofstream>& ic_pd::diagnostics_stream_open_m(bpo::variables_map &params_o, std::string fullpath)
 {
 
-    const std::string& stats_filename_o = 
-        params_op["ibsimu-beam-diagnostics-file"].as<std::string>();
+    //const std::string& stats_filename_o = 
+    //    params_o["ibsimu-beam-diagnostics-file"].as<std::string>();
+    const std::optional<std::string> stats_filename_o = ic_bpo::get(params_o, "ibsimu-beam-diagnostics-file");
+    if(!stats_filename_o) {
+        std::cout << "Required key ibsimu-beam-diagnostics-file not found in config file." << std::endl;
+        std::cout << "Aborting." << std::endl;
+        return std::nullopt;
+    }
     std::string fullpath_stats_filename_o;
-    if(stats_filename_o[0]=='/')
-        fullpath_stats_filename_o = stats_filename_o;
+    if(*stats_filename_o[0]=='/')
+        fullpath_stats_filename_o = *stats_filename_o;
     else
-        fullpath_stats_filename_o = fullpath + stats_filename_o;
+        fullpath_stats_filename_o = fullpath + *stats_filename_o;
 
     std::ofstream *csv_op = new std::ofstream(
         fullpath_stats_filename_o, 
         std::ios_base::out | std::ios_base::trunc );
     
+    if (!csv_op->good()) {
+        std::cout << "Unable to open diagnostics file: " << fullpath_stats_filename_o << std::endl;
+        std::cout << "Aborting." << std::endl;
+        return std::nullopt;
+    }
+
     return *csv_op;
 }
 

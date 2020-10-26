@@ -23,6 +23,7 @@
 
 #include "datatype.h"
 #include "config.h"
+#include "bpo_interface.h"
 
 #define PD_GRID_N 10 // grid NxM, was 100x100
 #define PD_GRID_M 10
@@ -70,7 +71,9 @@ namespace ibsimu_client::particle_diagnostics {
 
     std::vector<std::string> diagnostic_parameters_vector_m(std::string input_string);
 
-    std::ofstream& diagnostics_stream_open_m(bpo::variables_map &params_op, std::string fullpath);
+    std::optional<std::ofstream>& diagnostics_stream_open_m(
+        bpo::variables_map &params_o, 
+        std::string fullpath);
 
     typedef std::function<void(
         int,
@@ -90,7 +93,7 @@ namespace ibsimu_client::particle_diagnostics {
         );
 
     typedef std::function<void(int)> loop_start_m_t;
-    
+
     loop_start_m_t loop_start_factory_m(
         bpo::variables_map &params_op,
         std::ofstream& diagnostics_stream_o

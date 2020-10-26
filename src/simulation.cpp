@@ -321,16 +321,19 @@ int main(int argc, char *argv[])
 
        );
 
-        std::ofstream &diagnostics_file_o = ic_pd::diagnostics_stream_open_m(*params_op, cmdlp_op->run_o);
+        const std::optional<std::ofstream>& diagnostics_file_o = ic_pd::diagnostics_stream_open_m(*params_op, cmdlp_op->run_o);
+        if(!diagnostics_file_o) {
+            return 1;
+        }
         ic_pd::loop_start_m_t diagnostics_loop_start_m = 
             ic_pd::loop_start_factory_m(
                 (*params_op),
-                diagnostics_file_o
+                *diagnostics_file_o
             );
         ic_pd::loop_end_optional_m_t diagnostics_loop_end_m = 
             ic_pd::particle_diagnostics_factory_m(
                 (*params_op),
-                diagnostics_file_o
+                *diagnostics_file_o
             );
 
 
