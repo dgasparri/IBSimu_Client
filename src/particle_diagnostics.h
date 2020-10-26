@@ -14,7 +14,8 @@
 #include <boost/algorithm/string.hpp>
 
 #include <optional>
-#include <unordered_set>
+#include <functional>
+//#include <unordered_set>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -71,9 +72,10 @@ namespace ibsimu_client::particle_diagnostics {
 
     std::vector<std::string> diagnostic_parameters_vector_m(std::string input_string);
 
-    std::optional<std::ofstream>& diagnostics_stream_open_m(
+    void diagnostics_stream_open_m(
         bpo::variables_map &params_o, 
-        std::string fullpath);
+        std::string fullpath,
+        std::ofstream &csv_o);
 
     typedef std::function<void(
         int,

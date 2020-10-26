@@ -23,6 +23,7 @@
 #include "beam.h"
 #include "output.h"
 #include "output_console.h"
+#include "bpo_interface.h"
 
 
 namespace ic = ibsimu_client;
@@ -32,6 +33,7 @@ namespace ic_beam = ibsimu_client::beam;
 namespace ic_output = ibsimu_client::output;
 namespace ic_output_console = ibsimu_client::output_console;
 namespace ic_pd = ibsimu_client::particle_diagnostics;
+namespace ic_bpo = ibsimu_client::bpo_interface;
 
 
 
@@ -319,27 +321,36 @@ int main(int argc, char *argv[])
             prefix_pdb_o,
             geometry_op
 
-       );
+        );
 
-        const std::optional<std::ofstream>& diagnostics_file_o = ic_pd::diagnostics_stream_open_m(*params_op, cmdlp_op->run_o);
-        if(!diagnostics_file_o) {
+        std::ofstream diagnostics_file_o;
+        //changes diagnostics_file_o;
+        ic_pd::diagnostics_stream_open_m(
+            *params_op, 
+            cmdlp_op->run_o,
+            diagnostics_file_o);
+
+        if(!diagnostics_file_o.is_open()) {
+            std::cout << "Aborting." << std::endl;
             return 1;
         }
+
         ic_pd::loop_start_m_t diagnostics_loop_start_m = 
             ic_pd::loop_start_factory_m(
                 (*params_op),
-                *diagnostics_file_o
+                diagnostics_file_o
             );
         ic_pd::loop_end_optional_m_t diagnostics_loop_end_m = 
             ic_pd::particle_diagnostics_factory_m(
                 (*params_op),
-                *diagnostics_file_o
+                diagnostics_file_o
             );
 
 
-        const bool display_console = 
-                (*params_op)["display-console"].as<bool>();
-        if (display_console) 
+        const std::optional<bool> display_console = 
+                ic_bpo::get<bool>(*params_op,"display-console");
+                //(*params_op)["display-console"].as<bool>();
+        if (display_console.value_or(true)) 
             std::cout << "Displaying the console at the end" << std::endl;
         else
             std::cout << "Not displaying the console at the end" << std::endl;            
@@ -347,7 +358,7 @@ int main(int argc, char *argv[])
         
         ic_output_console::output_console_m_t output_console_m =
             ic_output_console::output_console_factory_m(
-                display_console,
+                display_console.value_or(true),
                 *geometry_op,
                 *bfield_op
             );
