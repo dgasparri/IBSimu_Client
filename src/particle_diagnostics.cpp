@@ -4,8 +4,8 @@
 namespace ic_pd = ibsimu_client::particle_diagnostics;
 namespace ic_bpo = ibsimu_client::bpo_interface;
 
-void ic_pd::particle_diagnostics_options_m(
-    bpo::options_description &command_line_options_o)
+void ic_pd::options_m(
+    bpo::options_description &options_o)
 {
         command_line_options_o.add_options()
             ("ibsimu-beam-diagnostics-file", bpo::value<std::string>(), "Filename to write emittance statistics to")

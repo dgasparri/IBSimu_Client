@@ -2,8 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <functional>
-//#include <numeric>
-
+#include <optional>
 #include <numeric>
 #include <chrono>
 
@@ -276,39 +275,46 @@ int main(int argc, char *argv[])
     std::cout<<"Run Directory: "<<cmdlp_op->run_o<<std::endl;
     std::cout<<"Config filename: "<<cmdlp_op->config_filename_o<<std::endl;
 
-    bpo::variables_map* params_op;
-    try {
-        params_op = ic_config::parameters_configfile_m(cmdlp_op->config_filename_o);
-    } catch (boost::exception& e) {
-        std::cout<<"Error in config file"<<std::endl;
-        std::cout<<diagnostic_information(e)<<std::endl;
-        std::cout<<"./simulation --help for help"<<std::endl;
+
+    bpo::options_description &options_o = ic_bpo::options_description_factory_m();
+    ic_config::options_m(options_o);
+    ic_pd::options_m(options_o);
+    // ... other options files here
+
+    std::optional<bpo::variables_map> params_optional_o = 
+        ic_bpo::variable_map_factory_m(
+            options_o,
+            cmdlp_op->config_filename_o);
+
+    if (!params_optional_o) {
+        std::cout << options_o;
         return 1;
     }
-    
+
+    bpo::variables_map &params_o = params_optional_o.value();
 
     try {
-    	ibsimu.set_message_threshold( ic_config::message_threshold_m(*params_op, MSG_VERBOSE), 1 );
-	    ibsimu.set_thread_count( ic_config::num_cores_m(*params_op, 2) );
+    	ibsimu.set_message_threshold( ic_config::message_threshold_m(params_o, MSG_VERBOSE), 1 );
+	    ibsimu.set_thread_count( ic_config::num_cores_m(params_o, 2) );
 
-        Geometry* geometry_op = ic_setup::geometry_m(*params_op); 
+        Geometry* geometry_op = ic_setup::geometry_m(params_o); 
 
-        ic_setup::wall_bound_m(*geometry_op, *params_op);
-        ic_setup::dxfsolids_m(*geometry_op, *params_op, cmdlp_op->run_o);
+        ic_setup::wall_bound_m(*geometry_op, params_o);
+        ic_setup::dxfsolids_m(*geometry_op, params_o, cmdlp_op->run_o);
 
-        MeshVectorField* bfield_op = ic_setup::bfield_m(*geometry_op, *params_op, cmdlp_op->run_o);
+        MeshVectorField* bfield_op = ic_setup::bfield_m(*geometry_op, params_o, cmdlp_op->run_o);
 
         geometry_op->build_mesh();
 
-        ic::physics_parameters_t &phy_pars = *ic_setup::physics_parameters_m(*params_op);
+        ic::physics_parameters_t &phy_pars = *ic_setup::physics_parameters_m(params_o);
 
       
         std::string& lbd_run_o = cmdlp_op->run_o;
         ibsimu_client::run_output_t lbd_run_output = cmdlp_op->run_output;
         ibsimu_client::loop_output_t lbd_loop_output = cmdlp_op->loop_output;
-        const std::string& prefix_geom_o = (*params_op)["ibsimu-file-prefix-geometry"].as<std::string>();
-        const std::string& prefix_epot_o = (*params_op)["ibsimu-file-prefix-epot"]    .as<std::string>();
-        const std::string& prefix_pdb_o  = (*params_op)["ibsimu-file-prefix-pdb"]     .as<std::string>();
+        const std::string& prefix_geom_o = (params_o)["ibsimu-file-prefix-geometry"].as<std::string>();
+        const std::string& prefix_epot_o = (params_o)["ibsimu-file-prefix-epot"]    .as<std::string>();
+        const std::string& prefix_pdb_o  = (params_o)["ibsimu-file-prefix-pdb"]     .as<std::string>();
 
        
 
@@ -326,7 +332,7 @@ int main(int argc, char *argv[])
         std::ofstream diagnostics_file_o;
         //changes diagnostics_file_o;
         ic_pd::diagnostics_stream_open_m(
-            *params_op, 
+            params_o, 
             cmdlp_op->run_o,
             diagnostics_file_o);
 
@@ -337,19 +343,19 @@ int main(int argc, char *argv[])
 
         ic_pd::loop_start_m_t diagnostics_loop_start_m = 
             ic_pd::loop_start_factory_m(
-                (*params_op),
+                (params_o),
                 diagnostics_file_o
             );
         ic_pd::loop_end_optional_m_t diagnostics_loop_end_m = 
             ic_pd::particle_diagnostics_factory_m(
-                (*params_op),
+                (params_o),
                 diagnostics_file_o
             );
 
 
         const std::optional<bool> display_console = 
-                ic_bpo::get<bool>(*params_op,"display-console");
-                //(*params_op)["display-console"].as<bool>();
+                ic_bpo::get<bool>(params_o,"display-console");
+                //(params_o)["display-console"].as<bool>();
         if (display_console.value_or(true)) 
             std::cout << "Displaying the console at the end" << std::endl;
         else
@@ -372,7 +378,7 @@ int main(int argc, char *argv[])
             std::ios_base::out | std::ios_base::trunc );
 
 
-        std::vector<ic_beam::beam_t> beams = ic_setup::beams_m(*params_op);
+        std::vector<ic_beam::beam_t> beams = ic_setup::beams_m(params_o);
         ic_beam::add_2d_beams_mt add_2b_beam_m = ic_beam::add_2d_beams_helper_m(beams);
 
         if(!diagnostics_loop_end_m) {
@@ -390,7 +396,7 @@ int main(int argc, char *argv[])
             output_console_m,
             diagnostics_loop_start_m,
             *diagnostics_loop_end_m,
-            (*params_op)["number-of-rounds"].as<int>()
+            (params_o)["number-of-rounds"].as<int>()
             );
     	
         diagnostics_file_o.close();

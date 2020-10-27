@@ -87,15 +87,12 @@ ibsimu_client::parameters_commandline_t* ic_config::parameters_commandline_m(int
     return options_op;
 } 
 
-// configfile_o.empty() -> print help
-// parameters_configfile_m
-bpo::variables_map* ic_config::parameters_configfile_m(std::string config_filename_o) 
+
+
+
+void ic_config::options_m(bpo::options_description& options_o)
 {
-
-
-    bpo::options_description config_file_options_o("Config file options");
-    config_file_options_o.add_options()
-    
+    options_o->add_options()
         ("ibsimu-cores", bpo::value<int>(), "Number of processor cores to use")
         ("number-of-rounds", bpo::value<int>()->default_value(50), "Number of rounds")
         ("display-console", bpo::value<bool>()->default_value(true), "Display console at end, set false for batch simulation [TRUE]")
@@ -173,17 +170,6 @@ bpo::variables_map* ic_config::parameters_configfile_m(std::string config_filena
         ("beam-vector-y2",                 bpo::value<std::vector<double>>(), "Beam vector y1")
 
     ;
-
-    if(config_filename_o.empty()) {
-        std::cout<<config_file_options_o<<std::endl;
-        return nullptr;
-    }
-
-    bpo::variables_map* vm_op = new bpo::variables_map;
-    //.c_str();
-    store(parse_config_file(config_filename_o.c_str(), config_file_options_o, true), *vm_op);
-    bpo::notify(*vm_op);
-    return vm_op;
 }
 
 /*

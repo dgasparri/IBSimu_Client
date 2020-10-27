@@ -47,8 +47,9 @@ struct analysis_parameters_t {
 
 namespace ibsimu_client::config {
 
-   
-    bpo::variables_map* parameters_configfile_m(std::string config_filename_o); 
+    
+    void ic_config::options_m(bpo::options_description& options_o);
+    
     ibsimu_client::parameters_commandline_t* parameters_commandline_m(int argc, char *argv[], bool is_simulation = true);
     ibsimu_client::parameters_commandline_t* clean_runpath_m(std::string current_directory, ibsimu_client::parameters_commandline_t* cmdlp_op);
     void show_help(bool is_simulation = true);

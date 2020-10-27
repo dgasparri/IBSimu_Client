@@ -50,8 +50,8 @@ namespace bpo = boost::program_options;
 
 namespace ibsimu_client::particle_diagnostics {
 
-    void particle_diagnostics_options_m(
-        bpo::options_description &command_line_options_o);
+    void options_m(
+        bpo::options_description &options_o);
     
     enum pd_extraction_parameters {
         eAlpha,
