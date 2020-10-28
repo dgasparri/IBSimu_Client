@@ -50,7 +50,11 @@ namespace ibsimu_client::config {
     
     void options_m(bpo::options_description& options_o);
     
-    ibsimu_client::commandline_options_t commandline_options_m(int argc, char *argv[], bool is_simulation = true);
+    bpo::options_description commandline_options_m();
+    ibsimu_client::commandline_options_t commandline_params_m(
+        std::optional<bpo::variables_map>& cmdl_vm_o);
+
+
     bool clean_runpath_m(std::string current_directory, ibsimu_client::commandline_options_t& cmdlp_o);
 
     int num_cores_m(bpo::variables_map &vm_o, int default_v = 2);

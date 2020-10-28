@@ -24,6 +24,12 @@ namespace ibsimu_client::bpo_interface {
         bpo::options_description& options_description_o,
         std::string config_filename_o);
 
+    std::optional<bpo::variables_map> cmdl_variable_map_factory_m(
+        const bpo::options_description &cmdl_options_o,
+        int argc, 
+        char *argv[]);
+
+
     template <typename T>
     std::optional<T> get(bpo::variables_map &params_op, std::string key)
     {

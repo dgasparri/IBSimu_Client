@@ -3,8 +3,18 @@
 int main(int argc, char *argv[]) 
 {
 
+    bpo::options_description cmdlopt_descriptions_o = 
+        ic_config::commandline_options_m();
+
+    std::optional<bpo::variables_map> cmdl_vm_o =
+        ic_bpo::cmdl_variable_map_factory_m(
+            cmdlopt_descriptions_o,
+            argc, 
+            argv);
+
+
     ic::commandline_options_t cmdlp_o = 
-            ic_config::commandline_options_m(argc, argv, true);
+            ic_config::commandline_params_m(cmdl_vm_o);
     
     const int buffer_len = 2500;
     char current_directory[buffer_len];
@@ -14,7 +24,7 @@ int main(int argc, char *argv[])
     if (!ic_config::clean_runpath_m(current_directory, cmdlp_o)) 
     {
         //Show command line help
-        ic_config::commandline_options_m(-1, nullptr, true);
+        std::cout << cmdlopt_descriptions_o << std::endl;
         return 0;
     }
 
@@ -23,7 +33,7 @@ int main(int argc, char *argv[])
     std::cout<<"Run Directory: "<<cmdlp_o.run_o<<std::endl;
     std::cout<<"Config filename: "<<cmdlp_o.config_filename_o<<std::endl;
 
-
+    return 0;
     bpo::options_description &options_o = ic_bpo::options_description_factory_m();
     ic_config::options_m(options_o);
     ic_output::options_m(options_o);

@@ -11,6 +11,7 @@ g++ -g `pkg-config --cflags ibsimu-1.0.6dev` -c -o config.o config.cpp -lboost_p
 
 
 namespace ic_config = ibsimu_client::config;
+namespace ic_bpo = ibsimu_client::bpo_interface;
 
 
 
@@ -35,53 +36,51 @@ message_type_e ic_config::message_threshold_m(bpo::variables_map &vm_o, message_
 
 }
 
-
-//argc == -1 -> prints help
-//parameters_commandline_m
-ibsimu_client::commandline_options_t ic_config::commandline_options_m(int argc, char *argv[], bool is_simulation)
+bpo::options_description ic_config::commandline_options_m()
 {
     bpo::options_description command_line_options_o("Command line options");
     command_line_options_o.add_options()
         ("help", "print help message")
-        ("run", bpo::value<std::string>()->default_value(""), "directory containing the config.ini of the file. Output files will be written in that directory ")
-        ("config-file", bpo::value<std::string>()->default_value(""), "configuration file, path relative to executable")
+        ("run", bpo::value<std::string>(), "directory containing the config.ini of the file. Output files will be written in that directory ")
+        ("config-file", bpo::value<std::string>(), "configuration file, path relative to executable")
+        ("epot-file", bpo::value<std::string>(), "epot file, path relative to executable [REQUIRED for analysis]")
+        ("pdb-file", bpo::value<std::string>(), "pdb file, path relative to executable [REQUIRED for analysis]")
         ;
+    return command_line_options_o;
+}
 
-    if(is_simulation) {
-        //ibsimu_client::output::output_options_m(command_line_options_o);
-        //ibsimu_client::particle_diagnostics::particle_diagnostics_options_m(command_line_options_o);
-    } else {
-        command_line_options_o.add_options()
-            ("epot-file", bpo::value<std::string>()->default_value(""), "epot file, path relative to executable [REQUIRED]")
-            ("pdb-file", bpo::value<std::string>()->default_value(""), "pdb file, path relative to executable [REQUIRED]")
-        ;
-    }
+
+
+ibsimu_client::commandline_options_t ic_config::commandline_params_m(
+    std::optional<bpo::variables_map>& cmdl_vm_o)
+{
 
     ibsimu_client::commandline_options_t options_o; 
 
-    //Prints help
-    if(argc == -1) {
-        std::cout<<command_line_options_o<<std::endl;
+    if(!cmdl_vm_o) {
         return options_o;
     }
-    
-    bpo::variables_map vm_cmdl_o;
-    store(parse_command_line(argc, argv, command_line_options_o), vm_cmdl_o);
+   
 
-    
-    options_o.run_o = vm_cmdl_o["run"].as<std::string>();
-    options_o.config_filename_o = vm_cmdl_o["config-file"].as<std::string>();
+    std::optional<std::string> run_optional_o = 
+        ic_bpo::get<std::string>(*cmdl_vm_o, "run");
+    if(run_optional_o)
+        options_o.run_o = run_optional_o.value();
 
-    if(is_simulation) {
-        options_o.run_output = ibsimu_client::output::output_options_run_output_m(vm_cmdl_o);
-        options_o.loop_output = ibsimu_client::output::output_options_loop_output_m(vm_cmdl_o);
-    }
+    std::optional<std::string> config_filename_optional_o = 
+        ic_bpo::get<std::string>(*cmdl_vm_o, "config-file");
+    if(config_filename_optional_o)
+        options_o.config_filename_o = config_filename_optional_o.value();
 
-    if(!is_simulation) {
-        options_o.epot_filename_o = vm_cmdl_o["epot-file"].as<std::string>();
-        options_o.pdb_filename_o = vm_cmdl_o["pdb-file"].as<std::string>();
+    std::optional<std::string> epot_file_optional_o = 
+        ic_bpo::get<std::string>(*cmdl_vm_o, "epot-file");
+    if(epot_file_optional_o)
+        options_o.epot_filename_o = epot_file_optional_o.value();
 
-    }
+    std::optional<std::string> pdb_file_optional_o = 
+        ic_bpo::get<std::string>(*cmdl_vm_o, "pdb-file");
+    if(pdb_file_optional_o)
+        options_o.pdb_filename_o = pdb_file_optional_o.value();
 
     return options_o;
 } 

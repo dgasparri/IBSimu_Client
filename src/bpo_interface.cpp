@@ -32,3 +32,30 @@ std::optional<bpo::variables_map> ic_bpo::variable_map_factory_m(
     return vm_o; 
 }
 
+
+std::optional<bpo::variables_map> ic_bpo::cmdl_variable_map_factory_m(
+    const bpo::options_description &cmdl_options_o,
+    int argc, 
+    char *argv[])
+{
+    if(argc < 2) {
+        return std::nullopt;
+    }
+
+    bpo::variables_map vm_o;
+    
+    try {
+
+        store(
+            parse_command_line(argc, argv, cmdl_options_o), 
+            vm_o);
+        bpo::notify(vm_o);
+    } catch (boost::exception& e) {
+        std::cout<<"Error in command line arguments."<<std::endl;
+        std::cout<<boost::diagnostic_information(e)<<std::endl;
+        std::cout<<"./simulation --help for help"<<std::endl;
+        return std::nullopt;
+    }
+    return vm_o; 
+}
+
