@@ -5,16 +5,16 @@ SRCDIR = src
 OBJDIR = bin/build
 #OBJECTS = $(OBJDIR)/%.o
 OBJECTS = $(OBJDIR)/config.o $(OBJDIR)/config-setup.o $(OBJDIR)/output.o \
-          $(OBJDIR)/beam.o $(OBJDIR)/output_console.o $(OBJDIR)/particle_diagnostics.o 
-
-		  # $(OBJDIR)/bpo_interface.o
+          $(OBJDIR)/beam.o $(OBJDIR)/output_console.o $(OBJDIR)/particle_diagnostics.o \
+		  $(OBJDIR)/bpo_interface.o
 
 
 all: $(OBJECTS) src/datatype.h
-	$(CC) $(CXXFLAGS) -c -o $(OBJDIR)/simulation.o $(SRCDIR)/simulation.cpp
+	#$(CC) $(CXXFLAGS) -c -o $(OBJDIR)/simulation.o $(SRCDIR)/simulation.hpp
+	$(CC) $(CXXFLAGS) -c -o $(OBJDIR)/simulation.o $(SRCDIR)/ibclient.cpp
 	$(CC) -o bin/simulation $(OBJDIR)/simulation.o $(OBJECTS) $(LDFLAGS)
-	$(CC) $(CXXFLAGS) -c -o $(OBJDIR)/analysis.o $(SRCDIR)/analysis.cpp
-	$(CC) -o bin/analysis $(OBJDIR)/analysis.o $(OBJECTS) $(LDFLAGS)
+	# $(CC) $(CXXFLAGS) -c -o $(OBJDIR)/analysis.o $(SRCDIR)/analysis.cpp
+	# $(CC) -o bin/analysis $(OBJDIR)/analysis.o $(OBJECTS) $(LDFLAGS)
 
 # alla fine 
 
@@ -36,8 +36,8 @@ bin/build/beam.o: src/beam.cpp src/beam.h src/datatype.h
 bin/build/particle_diagnostics.o: src/particle_diagnostics.cpp src/particle_diagnostics.h
 	$(CC) $(CXXFLAGS) -c -o bin/build/particle_diagnostics.o src/particle_diagnostics.cpp
 
-#bin/build/bpo_interface.o: src/bpo_interface.cpp src/bpo_interface.h
-#	$(CC) $(CXXFLAGS) -c -o bin/build/bpo_interface.o src/bpo_interface.cpp
+bin/build/bpo_interface.o: src/bpo_interface.cpp src/bpo_interface.h
+	$(CC) $(CXXFLAGS) -c -o bin/build/bpo_interface.o src/bpo_interface.cpp
 
 
 #bin/build/simulation.o: src/simulation.cpp src/datatype.h

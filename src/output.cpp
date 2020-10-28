@@ -3,14 +3,12 @@
 
 namespace ic_output = ibsimu_client::output;
 
-void ic_output::output_options_m(
-    bpo::options_description &command_line_options_o)
+void ic_output::options_m(bpo::options_description& options_o)
 {
-        command_line_options_o.add_options()
+        options_o.add_options()
             ("run-output", bpo::value<std::string>()->default_value("OUT_NORMAL"), "output files generated in the run [OUT_NORMAL (default, only final files), OUT_EVOLUTION (every 10 loops and last), OUT_BEGIN (first 3 loops and final), OUT_VERBOSE (first 3, every 10 loops and last)]")
             ("loop-output", bpo::value<std::string>()->default_value("LOOP_END"), "output files generated in the loop [LOOP_END (default, only at the end of the loop), LOOP_VERBOSE (every step of the loop)]")
         ;
-
 }
 
 ibsimu_client::run_output_t ic_output::output_options_run_output_m(bpo::variables_map& vm_o)

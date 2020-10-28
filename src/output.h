@@ -20,7 +20,7 @@ namespace bpo = boost::program_options;
 
 namespace ibsimu_client::output {
 
-    void output_options_m(bpo::options_description& command_line_options_o);
+    void options_m(bpo::options_description& options_o);
 
     //In datatype.h
     ibsimu_client::run_output_t output_options_run_output_m(bpo::variables_map& vm_o);

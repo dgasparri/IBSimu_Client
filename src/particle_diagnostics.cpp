@@ -7,7 +7,7 @@ namespace ic_bpo = ibsimu_client::bpo_interface;
 void ic_pd::options_m(
     bpo::options_description &options_o)
 {
-        command_line_options_o.add_options()
+        options_o.add_options()
             ("ibsimu-beam-diagnostics-file", bpo::value<std::string>(), "Filename to write emittance statistics to")
             ("diagnostics-axis", bpo::value<std::vector<std::string>>(), "Diagnostics axis [AXIS_X, AXIX_Y, AXIS_Z, AXIS_R]")
             ("diagnostics-at-loop", bpo::value<std::vector<std::string>>(), "Comma separated values of loops at which diagnostics should be recorded, for example: FIRST, 10, 20, 30, 40, LAST [ALL, FIRST, LAST, loop number (1,2,...)]")

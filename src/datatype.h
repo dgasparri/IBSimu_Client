@@ -25,7 +25,7 @@ namespace ibsimu_client {
     enum run_output_t {OUT_NORMAL, OUT_EVOLUTION, OUT_BEGIN, OUT_VERBOSE};
     enum loop_output_t {LOOP_END, LOOP_VERBOSE};
 
-    struct parameters_commandline_t {
+    struct commandline_options_t {
         std::string run_o;
         std::string config_filename_o;
         run_output_t run_output;

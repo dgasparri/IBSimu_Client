@@ -48,11 +48,10 @@ struct analysis_parameters_t {
 namespace ibsimu_client::config {
 
     
-    void ic_config::options_m(bpo::options_description& options_o);
+    void options_m(bpo::options_description& options_o);
     
-    ibsimu_client::parameters_commandline_t* parameters_commandline_m(int argc, char *argv[], bool is_simulation = true);
-    ibsimu_client::parameters_commandline_t* clean_runpath_m(std::string current_directory, ibsimu_client::parameters_commandline_t* cmdlp_op);
-    void show_help(bool is_simulation = true);
+    ibsimu_client::commandline_options_t commandline_options_m(int argc, char *argv[], bool is_simulation = true);
+    bool clean_runpath_m(std::string current_directory, ibsimu_client::commandline_options_t& cmdlp_o);
 
     int num_cores_m(bpo::variables_map &vm_o, int default_v = 2);
     message_type_e message_threshold_m(bpo::variables_map &vm_o, message_type_e default_v);

@@ -24,7 +24,7 @@
 
 #include "datatype.h"
 #include "config.h"
-#include "bpo_interface.hpp"
+#include "bpo_interface.h"
 
 #define PD_GRID_N 10 // grid NxM, was 100x100
 #define PD_GRID_M 10

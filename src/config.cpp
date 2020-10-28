@@ -38,7 +38,7 @@ message_type_e ic_config::message_threshold_m(bpo::variables_map &vm_o, message_
 
 //argc == -1 -> prints help
 //parameters_commandline_m
-ibsimu_client::parameters_commandline_t* ic_config::parameters_commandline_m(int argc, char *argv[], bool is_simulation)
+ibsimu_client::commandline_options_t ic_config::commandline_options_m(int argc, char *argv[], bool is_simulation)
 {
     bpo::options_description command_line_options_o("Command line options");
     command_line_options_o.add_options()
@@ -48,8 +48,8 @@ ibsimu_client::parameters_commandline_t* ic_config::parameters_commandline_m(int
         ;
 
     if(is_simulation) {
-        ibsimu_client::output::output_options_m(command_line_options_o);
-        ibsimu_client::particle_diagnostics::particle_diagnostics_options_m(command_line_options_o);
+        //ibsimu_client::output::output_options_m(command_line_options_o);
+        //ibsimu_client::particle_diagnostics::particle_diagnostics_options_m(command_line_options_o);
     } else {
         command_line_options_o.add_options()
             ("epot-file", bpo::value<std::string>()->default_value(""), "epot file, path relative to executable [REQUIRED]")
@@ -57,34 +57,33 @@ ibsimu_client::parameters_commandline_t* ic_config::parameters_commandline_m(int
         ;
     }
 
-    
+    ibsimu_client::commandline_options_t options_o; 
+
     //Prints help
     if(argc == -1) {
         std::cout<<command_line_options_o<<std::endl;
-        return nullptr;
+        return options_o;
     }
     
     bpo::variables_map vm_cmdl_o;
     store(parse_command_line(argc, argv, command_line_options_o), vm_cmdl_o);
 
-    ibsimu_client::parameters_commandline_t* options_op =
-            new ibsimu_client::parameters_commandline_t; 
     
-    options_op->run_o = vm_cmdl_o["run"].as<std::string>();
-    options_op->config_filename_o = vm_cmdl_o["config-file"].as<std::string>();
+    options_o.run_o = vm_cmdl_o["run"].as<std::string>();
+    options_o.config_filename_o = vm_cmdl_o["config-file"].as<std::string>();
 
     if(is_simulation) {
-        options_op->run_output = ibsimu_client::output::output_options_run_output_m(vm_cmdl_o);
-        options_op->loop_output = ibsimu_client::output::output_options_loop_output_m(vm_cmdl_o);
+        options_o.run_output = ibsimu_client::output::output_options_run_output_m(vm_cmdl_o);
+        options_o.loop_output = ibsimu_client::output::output_options_loop_output_m(vm_cmdl_o);
     }
 
     if(!is_simulation) {
-        options_op->epot_filename_o = vm_cmdl_o["epot-file"].as<std::string>();
-        options_op->pdb_filename_o = vm_cmdl_o["pdb-file"].as<std::string>();
+        options_o.epot_filename_o = vm_cmdl_o["epot-file"].as<std::string>();
+        options_o.pdb_filename_o = vm_cmdl_o["pdb-file"].as<std::string>();
 
     }
 
-    return options_op;
+    return options_o;
 } 
 
 
@@ -92,7 +91,7 @@ ibsimu_client::parameters_commandline_t* ic_config::parameters_commandline_m(int
 
 void ic_config::options_m(bpo::options_description& options_o)
 {
-    options_o->add_options()
+    options_o.add_options()
         ("ibsimu-cores", bpo::value<int>(), "Number of processor cores to use")
         ("number-of-rounds", bpo::value<int>()->default_value(50), "Number of rounds")
         ("display-console", bpo::value<bool>()->default_value(true), "Display console at end, set false for batch simulation [TRUE]")
@@ -232,18 +231,13 @@ analysis_parameters_t* analysis_parameters_m(int argc, char *argv[])
 }
 */
 
-void ic_config::show_help(bool is_simulation)
-{
-    parameters_commandline_m(-1, nullptr, is_simulation);
-    parameters_configfile_m(to_string(""));
-}
 
 //clean_runpath
-ibsimu_client::parameters_commandline_t* ic_config::clean_runpath_m(std::string current_directory, ibsimu_client::parameters_commandline_t* cmdlp_op)
+bool ic_config::clean_runpath_m(std::string current_directory, ibsimu_client::commandline_options_t& cmdlp_o)
 {
 
-    bool run = !cmdlp_op->run_o.empty();
-    bool config = !cmdlp_op->config_filename_o.empty();
+    bool run = !cmdlp_o.run_o.empty();
+    bool config = !cmdlp_o.config_filename_o.empty();
     /*
         !run & !config -> show help
         !run -> run to current dir 
@@ -254,26 +248,26 @@ ibsimu_client::parameters_commandline_t* ic_config::clean_runpath_m(std::string 
     */
 
     if (!run && !config) 
-        return nullptr;
+        return false;
 
     if(!run) {
-        cmdlp_op->run_o = to_string(current_directory) + "/";
+        cmdlp_o.run_o = to_string(current_directory) + "/";
     } 
 
-    if(cmdlp_op->run_o[0] != '/') 
-        cmdlp_op->run_o = to_string(current_directory) + "/" + cmdlp_op->run_o ;
+    if(cmdlp_o.run_o[0] != '/') 
+        cmdlp_o.run_o = to_string(current_directory) + "/" + cmdlp_o.run_o ;
 
     
-    if ( cmdlp_op->run_o.find_last_of('/') != cmdlp_op->run_o.length() -1)
-        cmdlp_op->run_o.append("/");
+    if ( cmdlp_o.run_o.find_last_of('/') != cmdlp_o.run_o.length() -1)
+        cmdlp_o.run_o.append("/");
 
     if(!config) {
-        cmdlp_op->config_filename_o = to_string("config.ini");
+        cmdlp_o.config_filename_o = to_string("config.ini");
     }
-    if(cmdlp_op->config_filename_o[0] != '/') 
-        cmdlp_op->config_filename_o = cmdlp_op->run_o + cmdlp_op->config_filename_o;
+    if(cmdlp_o.config_filename_o[0] != '/') 
+        cmdlp_o.config_filename_o = cmdlp_o.run_o + cmdlp_o.config_filename_o;
 
-    return cmdlp_op;
+    return true;
 
 }
 

@@ -100,7 +100,7 @@ void simulation(
 int main(int argc, char *argv[]) 
 {
 
-    ic::parameters_commandline_t* cmdlp_op = 
+    ic::commandline_options_t* cmdlp_op = 
             ic_config::parameters_commandline_m(argc, argv, false);
     
     const int buffer_len = 2500;
