@@ -23,12 +23,20 @@ std::optional<bpo::variables_map> ic_bpo::variable_map_factory_m(
                 true), 
             vm_o);
         bpo::notify(vm_o);
-    } catch (boost::exception& e) {
-        std::cout<<"Error in config file."<<std::endl;
+    } catch (boost::bad_any_cast& e) {
+        std::cout<<"Error in provided options  (bad_any_cast): " << e.what() << std::endl;
         std::cout<<boost::diagnostic_information(e)<<std::endl;
         std::cout<<"./simulation --help for help"<<std::endl;
         return std::nullopt;
-    }
+    } catch (std::exception& e) {
+        std::cout<<"Error in provided options (general error): " << e.what() << std::endl;
+        std::cout<<boost::diagnostic_information(e)<<std::endl;
+        std::cout<<"./simulation --help for help"<<std::endl;
+        return std::nullopt;
+    } 
+    
+    
+    
     return vm_o; 
 }
 
@@ -50,8 +58,13 @@ std::optional<bpo::variables_map> ic_bpo::cmdl_variable_map_factory_m(
             parse_command_line(argc, argv, cmdl_options_o), 
             vm_o);
         bpo::notify(vm_o);
-    } catch (boost::exception& e) {
-        std::cout<<"Error in command line arguments."<<std::endl;
+    } catch (boost::bad_any_cast& e) {
+        std::cout<<"Error in provided command line arguments  (bad_any_cast): " << e.what() << std::endl;
+        std::cout<<boost::diagnostic_information(e)<<std::endl;
+        std::cout<<"./simulation --help for help"<<std::endl;
+        return std::nullopt;
+    } catch (std::exception& e) {
+        std::cout<<"Error in provided command line arguments (general error): " << e.what() << std::endl;
         std::cout<<boost::diagnostic_information(e)<<std::endl;
         std::cout<<"./simulation --help for help"<<std::endl;
         return std::nullopt;

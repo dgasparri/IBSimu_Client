@@ -27,6 +27,7 @@ ic_pd::pd_extraction_parameters ic_pd::hash_parameters(std::string param)
     if (param == PD_GAMMA) return ic_pd::eGamma;
     if (param == PD_RMAJOR) return ic_pd::eRmajor;
     if (param == PD_RMINOR) return ic_pd::eRminor;
+    if (param == PD_ANGLE) return ic_pd::eAngle;
     if (param == PD_X_AVERAGE) return ic_pd::eXaverage;
     if (param == PD_X_P_AVE) return ic_pd::eXpave;
     if (param == PD_I_TOT) return ic_pd::eItot;
@@ -129,16 +130,38 @@ ic_pd::loop_end_optional_m_t
    )
 {
     
-    const std::vector<std::string> &diag_at_loop = params_o["diagnostics-at-loop"].as<std::vector<std::string>>();
-    const std::vector<std::string> &diag_axis_str = params_o["diagnostics-axis"].as<std::vector<std::string>>();
-    const std::vector<double> &diag_plane_coordinate = params_o["diagnostics-plane-coordiante"].as<std::vector<double>>();
-    const std::vector<std::string> &diag_extr_params_str = params_o["diagnostics-extraction-parameters"].as<std::vector<std::string>>();
+    const std::optional<std::vector<std::string>> diag_at_loop = 
+        ic_bpo::get<std::vector<std::string>>(params_o,"diagnostics-at-loop");
+    const std::optional<std::vector<std::string>> diag_axis_str = 
+        ic_bpo::get<std::vector<std::string>>(params_o,"diagnostics-axis");
+    const std::optional<std::vector<double>> diag_plane_coordinate = 
+        ic_bpo::get<std::vector<double>>(params_o,"diagnostics-plane-coordiante");
+    const std::optional<std::vector<std::string>> diag_extr_params_str = 
+        ic_bpo::get<std::vector<std::string>>(params_o,"diagnostics-extraction-parameters");
 
-    const std::size_t extractions = diag_at_loop.size();
+    if (   !diag_at_loop 
+        && !diag_axis_str
+        && !diag_plane_coordinate
+        && !diag_extr_params_str)
+    {
+        //No diagnostics required by project, returning dummy function
+        std::cout << "No diagnostics required. Will output an empty diagnostics file." << std::endl;
+        return [
+            &diagnostics_stream_o
+        ](
+            int loop_n,
+            ParticleDataBase& pdb_o
+        ) {
+            diagnostics_stream_o << std::endl;
+            diagnostics_stream_o.flush();
+        };
+    }
+
+    const std::size_t extractions = (*diag_at_loop).size();
     
-    if(diag_axis_str.size() != extractions
-       || diag_plane_coordinate.size() != extractions 
-       || diag_extr_params_str.size() != extractions)
+    if((*diag_axis_str).size() != extractions
+       || (*diag_plane_coordinate).size() != extractions 
+       || (*diag_extr_params_str).size() != extractions)
     {
         std::cout << "There must be the same number of diagnostics-at-loop, diagnostics-axis, diagnostics-plane-coordiante and diagnostics-extraction-parameters." << std::endl;
         std::cout << "Particle diagnostics unable to instantiate. Aborting. "  << std::endl;
@@ -147,7 +170,7 @@ ic_pd::loop_end_optional_m_t
 
     //std::unordered_set<std::string> axes = {PD_AXIS_X, PD_AXIS_Y, PD_AXIS_Z, PD_AXIS_R};
     std::vector<coordinate_axis_e> diag_axis;
-    for(std::string axis: diag_axis_str)
+    for(std::string axis: (*diag_axis_str))
     {
         boost::algorithm::trim(axis);
         if(axis == PD_AXIS_X) diag_axis.emplace_back(AXIS_X);
@@ -168,10 +191,28 @@ ic_pd::loop_end_optional_m_t
     //TODO: Check diag_plane_coordinate against geometry_o.max(0), 
 
     std::vector<std::vector<std::string>> diag_extr_params;
-    for(auto &params_str: diag_extr_params_str)
+    for(auto &params_str: *diag_extr_params_str)
     {
         diag_extr_params.push_back(ic_pd::diagnostic_parameters_vector_m(params_str));
     }
+
+    diagnostics_stream_o << "loop#";
+    for(size_t i = 0; i < diag_extr_params.size(); i++) {
+        std::string t_axis_pos;
+        if(diag_axis[i] == AXIS_X) t_axis_pos = PD_AXIS_X;
+        if(diag_axis[i] == AXIS_Y) t_axis_pos = PD_AXIS_Y;
+        if(diag_axis[i] == AXIS_Z) t_axis_pos = PD_AXIS_Z;
+        if(diag_axis[i] == AXIS_R) t_axis_pos = PD_AXIS_R;
+        t_axis_pos += ":";
+        t_axis_pos += to_string((*diag_plane_coordinate)[i]);
+        for(const std::string &t_param: diag_extr_params[i]) {
+            diagnostics_stream_o << "," 
+                                << t_param
+                                << "[" << t_axis_pos << "]";
+        }
+    }
+    diagnostics_stream_o << std::endl;
+    diagnostics_stream_o.flush();
 
     return [
         //&params_o,
@@ -204,7 +245,7 @@ ic_pd::loop_end_optional_m_t
                 pdb_o.trajectories_at_plane( 
                         tdata, 
                         diag_axis[i], 
-                        diag_plane_coordinate[i], 
+                        (*diag_plane_coordinate)[i], 
                         diag );
                 
                 //Emittance statistics are from original data, not gridded data
@@ -240,32 +281,75 @@ ic_pd::loop_end_optional_m_t
                         case ic_pd::eRminor:
                             diagnostics_stream_o << "," << emit.rminor();
                             break;
+                        case ic_pd::eXaverage:
+                            diagnostics_stream_o << "," << emit.xave();
+                            break;
+                        case ic_pd::eXpave:
+                            diagnostics_stream_o << "," << emit.xpave();
+                            break;
                         case ic_pd::eItot:
                             {
                                 const std::vector<double>& IQ_end_o = tdata(3).data();
                                 const double iTot = std::reduce(std::execution::par, IQ_end_o.cbegin(),IQ_end_o.cend());
                                 diagnostics_stream_o << "," << iTot;
-                                break;
                             }
+                            break;
                         case ic_pd::eNparticles:
                             {
                                 const size_t num_traj_end = tdata(3).size();
                                 diagnostics_stream_o << "," << num_traj_end;
-                                break;
                             }
+                            break;
                         default:
                             std::cout<<"Particle Diagnostics: parameter *" << param << "* unknown, ignoring it." << std::endl;
+                            diagnostics_stream_o << "," << "Unknown";
+                            break;
                     }
                 }
 
-                diagnostics_stream_o << std::endl;
-                diagnostics_stream_o.flush();
                 diag.clear();
                 tdata.clear();
             }
-            
-            
-            
+            diagnostics_stream_o << std::endl;
+            diagnostics_stream_o.flush();
+
+
+        //try - da cancellare da qui in poi:
+        //TrajectoryDiagnosticData tdata;
+        //std::vector<trajectory_diagnostic_e> diag;
+        diag.push_back( DIAG_R );
+        diag.push_back( DIAG_RP );
+        diag.push_back( DIAG_AP );
+        diag.push_back( DIAG_CURR );
+        pdb_o.trajectories_at_plane( 
+                tdata, 
+                AXIS_X, 
+                0.5, 
+                diag );
+        
+        //Emittance statistics are from original data, not gridded data
+        EmittanceConv emit( 
+                100, // n Grid array n x m
+                100, // m
+                tdata(0).data(), //DIAG_R TrajectoryDiagnosticColumn
+                tdata(1).data(), //DIAG_RP
+                tdata(2).data(), //DIAG_AP
+                tdata(3).data()  //DIAG_CURR I
+                );
+
+        std::cout << "Alpha" << emit.alpha() << std::endl;
+        std::cout << "beta" << emit.beta() << std::endl;
+        std::cout << "epsilon" << emit.beta() << std::endl;
+
+        const int num_traj_end = tdata(3).size();
+        const std::vector<double>& IQ_end_o = tdata(3).data();
+        double IQ_end = 0.0;
+        for(const double IQ: IQ_end_o) {
+            IQ_end+= IQ;
+        }
+
+        std::cout << "NTraj end: " << num_traj_end <<std::endl;
+        std::cout << "IQ End: " << IQ_end <<std::endl;
 
 
 

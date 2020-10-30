@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     std::cout<<"Run Directory: "<<cmdlp_o.run_o<<std::endl;
     std::cout<<"Config filename: "<<cmdlp_o.config_filename_o<<std::endl;
 
-    return 0;
+    //return 0;
     bpo::options_description &options_o = ic_bpo::options_description_factory_m();
     ic_config::options_m(options_o);
     ic_output::options_m(options_o);
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
     }
 
     bpo::variables_map &params_o = params_optional_o.value();
-
+ 
     try {
     	ibsimu.set_message_threshold( ic_config::message_threshold_m(params_o, MSG_VERBOSE), 1 );
 	    ibsimu.set_thread_count( ic_config::num_cores_m(params_o, 2) );
