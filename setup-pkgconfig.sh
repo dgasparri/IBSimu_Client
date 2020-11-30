@@ -1,0 +1,1 @@
+export PKG_CONFIG_PATH=/home/ibsimu/lib/pkgconfig
