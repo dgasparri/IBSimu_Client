@@ -8,7 +8,7 @@ void ic_pd::options_m(
     bpo::options_description &options_o)
 {
         options_o.add_options()
-            ("ibsimu-beam-diagnostics-file", bpo::value<std::string>(), "Filename to write emittance statistics to")
+            ("ibsimu-file-beam-diagnostics", bpo::value<std::string>(), "Filename to write emittance statistics to")
             ("diagnostics-axis", bpo::value<std::vector<std::string>>(), "Diagnostics axis [AXIS_X, AXIX_Y, AXIS_Z, AXIS_R]")
             ("diagnostics-at-loop", bpo::value<std::vector<std::string>>(), "Comma separated values of loops at which diagnostics should be recorded, for example: FIRST, 10, 20, 30, 40, LAST [ALL, FIRST, LAST, loop number (1,2,...)]")
             ("diagnostics-plane-coordiante", bpo::value<std::vector<double>>(), "plane coordinate")
@@ -83,8 +83,8 @@ void ic_pd::diagnostics_stream_open_m(
 {
 
     //const std::string& stats_filename_o = 
-    //    params_o["ibsimu-beam-diagnostics-file"].as<std::string>();
-    const std::optional<std::string> stats_filename_o = ic_bpo::get<std::string>(params_o, "ibsimu-beam-diagnostics-file");
+    //    params_o["ibsimu-file-beam-diagnostics"].as<std::string>();
+    const std::optional<std::string> stats_filename_o = ic_bpo::get<std::string>(params_o, "ibsimu-file-beam-diagnostics");
     if(!stats_filename_o) {
         std::cout << "Required key ibsimu-beam-diagnostics-file not found in config file." << std::endl;
         return;
@@ -231,17 +231,18 @@ ic_pd::loop_end_optional_m_t
             if(!extractions)
                 return;            
 
-            TrajectoryDiagnosticData tdata;
-            
-            std::vector<trajectory_diagnostic_e> diag;
-
-            diag.push_back( DIAG_R );
-            diag.push_back( DIAG_RP );
-            diag.push_back( DIAG_AP );
-            diag.push_back( DIAG_CURR );
-            
             //Iniziare loop
             for(std::size_t i = 0; i < extractions; i++) {
+                std::cout<<"Extracting diagnostic data at "<<(*diag_plane_coordinate)[i]<<std::endl;
+
+                TrajectoryDiagnosticData tdata;
+
+                std::vector<trajectory_diagnostic_e> diag;
+                diag.push_back( DIAG_R );
+                diag.push_back( DIAG_RP );
+                diag.push_back( DIAG_AP );
+                diag.push_back( DIAG_CURR );
+
                 pdb_o.trajectories_at_plane( 
                         tdata, 
                         diag_axis[i], 
@@ -313,7 +314,7 @@ ic_pd::loop_end_optional_m_t
             diagnostics_stream_o << std::endl;
             diagnostics_stream_o.flush();
 
-
+/*
         //try - da cancellare da qui in poi:
         //TrajectoryDiagnosticData tdata;
         //std::vector<trajectory_diagnostic_e> diag;
@@ -326,8 +327,9 @@ ic_pd::loop_end_optional_m_t
                 AXIS_X, 
                 0.5, 
                 diag );
-        
+        */
         //Emittance statistics are from original data, not gridded data
+        /*
         EmittanceConv emit( 
                 100, // n Grid array n x m
                 100, // m
@@ -351,7 +353,7 @@ ic_pd::loop_end_optional_m_t
         std::cout << "NTraj end: " << num_traj_end <<std::endl;
         std::cout << "IQ End: " << IQ_end <<std::endl;
 
-
+        */
 
 
 
