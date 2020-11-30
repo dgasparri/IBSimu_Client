@@ -1,0 +1,109 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{color}
+\usepackage{parskip}% http://ctan.org/pkg/parskip
+
+% \setlength{\parindent}{0pt}
+
+\title{IBSimu Add 2d beam}
+\date{2020-10-06}
+
+\begin{document}
+  \maketitle
+  
+\section{variables}
+\begin{itemize}
+	\item m [kg] particle mass (provided in u)
+	\item q [J] charge of beam particle (provided in multiples of e)
+	\item J [A/m\^2] beam current density
+	\item E [J]  mean energy (provided in eV)
+	\item Tp [J] parallel temperature (provided in eV)
+	\item Tt [J] transverse temperature (provided in eV)
+	\item ($x_{1}, r_{1}), (x_{2}, r_{2}$) [m] beam emission line vectors
+	\item N number of particles
+	\item IQ [A] (A/m?) particle current
+	\item v [m/s] from E and m
+\end{itemize}
+
+\section{ParticleDataBaseCylImp::add\_2d\_beam\_with\_energy}
+
+Function ParticleDataBaseCylImp::add\_2d\_beam\_with\_energy (file: \textit{particledatabaseimp.cpp}, line: 968) is used to add a beam of N particles with average energy E to a cylindrical geometry.
+
+The charge q is provided by the user and is set constant for all the particles.
+
+The beam emission line norm s [m] is defined:
+
+\begin{equation}
+	s = \sqrt{(x_{2}-x_{1})^2+(r_{2}-r_{1})^2}
+\end{equation}
+
+The current IQ [A] is set for each particle as follows:
+
+\begin{equation}
+	IQ =\frac{2\pi sJ}{N}(r_{1} + \frac{(r_{2}-r_{1})}{N}(n+0.5))
+\end{equation}
+
+where $n\in[0,1,...,N-1]$. 
+
+The particles are distributed evenly spaced along the emission line defined by the vectors $(x_{1},r_{1}), (x_{2},r_{2})$. The particle velocities $v_{x},v_{r}$ [m/s] are:
+
+\begin{equation}
+	v_{x}=\frac{(x_{2}-x_{1})}{s}\sqrt{\frac{Tt}{m}}rnd_{0}+\frac{(r_{2}-r_{1})}{s}\sqrt{\frac{2E}{m}+(\sqrt{\frac{Tp}{m}}rnd_{1})^2}
+\end{equation}
+
+\begin{equation}
+	v_{r}=\frac{(r_{2}-r_{1})}{s}\sqrt{\frac{Tt}{m}}rnd_{0}+\frac{-(x_{2}-x_{1})}{s}\sqrt{\frac{2E}{m}+(\sqrt{\frac{Tp}{m}}rnd_{1})^2} 
+\end{equation}
+
+and
+
+\begin{equation}
+	w=\frac{d\theta}{dt}=\frac{\sqrt{\frac{Tt}{m}}rnd_{2}}{r_{1} + \frac{(r_{2}-r_{1})}{N}(n+0.5)}
+\end{equation}
+
+with $rnd_{0}$, $rnd_{1}$ and $rnd_{2}$ normally distributed random variables.
+
+\section{Particle Diagnostic}
+
+The relevant functions are in files gtkparticlediagdialog.cpp (the GTK dialog file) and particlediagplot.cpp (does the actual plotting). It has the following methods:
+
+\begin{itemize}
+	\item ParticleDiagPlot::build_data(): the function extracts the data from the ParticleDatabase
+	\item ParticleDiagPlot::build_plot(): calls build_data(). the function extracts the data from the ParticleDatabase, set the decorations and add the graph to the _frame
+\end{itemize}
+
+
+\section{ToDo}
+
+Particle Types
+
+template<class PP> class Particle {
+	std::vector<PP> 	_trajectory; <- trajectories
+       PP				_x; <- current position
+}
+Typedef Particle<ParticleP2D> Particle2D;
+Typedef Particle<ParticlePCyl> ParticleCyl;
+Typedef Particle<ParticleP3D> Particle3D;
+
+Particle Types in Beam
+
+ParticleDataBaseCylImp::add_*_beam -> ParticlePCyl->ParticleCyl
+ParticleDataBase2DImp::add_*_beam->ParticleP2D->Particle2D
+ParticleDataBase3DImp::add_*_beam->ParticleP3D->Particle3D
+
+
+
+ParticleDataBasePPImp< PP >::trajectories_at_plane 
+
+
+Int ParticleP2D::trajectory_intersections_at_plane
+( NON CONST	std::vector< ParticleP2D > & 	intsc)
+Return the number of trajectory intersections with plane
+Intersection points are appended to vector intsc.
+Int TrajectoryRep1D::solve()
+Returns solutions found [ Linear [0,1], Quadratic[0,1,2], Cubic [0,1,2,3]]
+
+
+
+
+
+\end{document}

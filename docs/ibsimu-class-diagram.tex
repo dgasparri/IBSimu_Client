@@ -1,0 +1,89 @@
+% IBSimu Class diagram
+% Author: Duccio Marco Gasparri
+% From a sample of Remus Mihail Prunescu https://texample.net/tikz/examples/class-diagram/
+\documentclass{minimal}
+\usepackage[a4paper,margin=1cm,landscape]{geometry}
+\usepackage{tikz}
+
+%%%<
+\usepackage{verbatim}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{5pt}%
+%%%>
+
+\begin{comment}
+:Title:  Class diagram
+
+\end{comment}
+\usetikzlibrary{positioning,shapes,shadows,arrows}
+
+\begin{document}
+\tikzstyle{abstract}=[rectangle, draw=black, rounded corners, fill=blue!40, drop shadow,
+        text centered, anchor=north, text=white, text width=3cm]
+\tikzstyle{comment}=[rectangle, draw=black, rounded corners, fill=green, drop shadow,
+        text centered, anchor=north, text=white, text width=3cm]
+\tikzstyle{myarrow}=[->, >=open triangle 90, thick]
+\tikzstyle{line}=[-, thick]
+        
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+    \node (AuxNode01) [text width=4cm] {};
+    \node (Field) [abstract, rectangle split, rectangle split parts=2, left=of AuxNode01]
+        {
+            \textbf{Field}
+            \nodepart{second}nil
+        };
+    \node (Mesh) [abstract, rectangle split, rectangle split parts=2, right=of AuxNode01]
+        {
+            \textbf{Mesh}
+            \nodepart{second}nil
+        };
+    \node (AuxNode02) [text width=0.5cm, below=of Field] {};
+    \node (VectorField) [abstract, rectangle split, rectangle split parts=2, left=of AuxNode02]
+        {
+            \textbf{VectorField}
+            \nodepart{second}nil
+        };
+    \node (ScalarField) [abstract, rectangle split, rectangle split parts=2, right=of AuxNode02]
+        {
+            \textbf{ScalarField}
+            \nodepart{second}nil
+        };
+        
+    %\node (AuxNode03) [text width=0.5cm, below=of VectorField] {};
+    \node (EpotEfield) [abstract, rectangle split, rectangle split parts=2, below=of VectorField] %AuxNode03, xshift=2cm
+        {
+            \textbf{EpotEfield}
+            \nodepart{second}nil
+        };
+        
+    \node (AuxNode04) [below=of Mesh] {};
+    \node (Geometry) [abstract, rectangle split, rectangle split parts=2, right=of AuxNode04] %, xshift=-2cm
+        {
+            \textbf{Geometry}
+            \nodepart{second}nil
+        };
+%    \node (AuxNode05) [left=of AuxNode04] {};
+%    \node (EpotField) [abstract, rectangle split, rectangle split parts=2, below=of AuxNode05] %, xshift=2cm
+    \node (AuxNode05) [below=of ScalarField] {};
+    \node (EpotField) [abstract, rectangle split, rectangle split parts=2, right=of AuxNode05] %, xshift=2cm
+        {
+            \textbf{EpotField}
+            \nodepart{second}nil
+        };
+     
+    \draw[myarrow] (VectorField.north) -- ++(0,0.8) -| (Field.south);
+    \draw[line] (VectorField.north) -- ++(0,0.8) -| (ScalarField.north);
+    
+    \draw[myarrow] (EpotEfield.north) -- ++(0,0.8) -| (VectorField.south);
+    \draw[myarrow] (Geometry.north) -- ++(0,0.8) -| (Mesh.south);
+    \draw[myarrow] (EpotField.north) -- ++(0,0.8) -| (ScalarField.south);
+    \draw[line] (EpotField.north) -- ++(0,0.8) -| (Mesh.south); %Added
+    %\draw[line] (EpotField.north) -- ++(0,0.8) -| (Geometry.north);
+    %\draw[myarrow] (Coolant.east) -- ++(0.2,0) -- ([yshift=0.5cm, xshift=0.2cm] Valve.north east) -|
+        
+        
+\end{tikzpicture}
+\end{center}
+\end{document}
