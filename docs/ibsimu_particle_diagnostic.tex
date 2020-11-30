@@ -4,8 +4,10 @@
 
 % \setlength{\parindent}{0pt}
 
-\title{IBSimu Add 2d beam}
-\date{2020-10-06}
+\title{IBSimu Particle Diagnostic \\
+	\large Working Draft}
+\date{2020-11-30}
+\author{Duccio Marco Gasparri}
 
 \begin{document}
   \maketitle
@@ -67,8 +69,8 @@ with $rnd_{0}$, $rnd_{1}$ and $rnd_{2}$ normally distributed random variables.
 The relevant functions are in files gtkparticlediagdialog.cpp (the GTK dialog file) and particlediagplot.cpp (does the actual plotting). It has the following methods:
 
 \begin{itemize}
-	\item ParticleDiagPlot::build_data(): the function extracts the data from the ParticleDatabase
-	\item ParticleDiagPlot::build_plot(): calls build_data(). the function extracts the data from the ParticleDatabase, set the decorations and add the graph to the _frame
+	\item ParticleDiagPlot::build\_data(): the function extracts the data from the ParticleDatabase
+	\item ParticleDiagPlot::build\_plot(): calls build\_data(). the function extracts the data from the ParticleDatabase, set the decorations and add the graph to the \_frame
 \end{itemize}
 
 
@@ -76,27 +78,27 @@ The relevant functions are in files gtkparticlediagdialog.cpp (the GTK dialog fi
 
 Particle Types
 
-template<class PP> class Particle {
-	std::vector<PP> 	_trajectory; <- trajectories
-       PP				_x; <- current position
-}
+template<class PP> class Particle \{
+	std::vector<PP> 	\_trajectory; <- trajectories
+       PP				\_x; <- current position
+\}
 Typedef Particle<ParticleP2D> Particle2D;
 Typedef Particle<ParticlePCyl> ParticleCyl;
 Typedef Particle<ParticleP3D> Particle3D;
 
 Particle Types in Beam
 
-ParticleDataBaseCylImp::add_*_beam -> ParticlePCyl->ParticleCyl
-ParticleDataBase2DImp::add_*_beam->ParticleP2D->Particle2D
-ParticleDataBase3DImp::add_*_beam->ParticleP3D->Particle3D
+ParticleDataBaseCylImp::add\_*\_beam -> ParticlePCyl->ParticleCyl
+ParticleDataBase2DImp::add\_*\_beam->ParticleP2D->Particle2D
+ParticleDataBase3DImp::add\_*\_beam->ParticleP3D->Particle3D
 
 
 
-ParticleDataBasePPImp< PP >::trajectories_at_plane 
+ParticleDataBasePPImp< PP >::trajectories\_at\_plane 
 
 
-Int ParticleP2D::trajectory_intersections_at_plane
-( NON CONST	std::vector< ParticleP2D > & 	intsc)
+Int ParticleP2D::trajectory\_intersections\_at\_plane
+( NON CONST	std::vector< ParticleP2D > \& 	intsc)
 Return the number of trajectory intersections with plane
 Intersection points are appended to vector intsc.
 Int TrajectoryRep1D::solve()
