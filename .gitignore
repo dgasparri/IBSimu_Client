@@ -8,6 +8,15 @@ ibsimu_client.code-workspace
 /example-*/
 /sandbox/
 
+# TeXworks
+
+/docs/*.log
+/docs/*.aux
+/docs/*.synctex.gz
+
+# Windows
+desktop.ini
+
 # Prerequisites
 *.d
 
