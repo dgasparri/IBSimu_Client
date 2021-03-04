@@ -2,6 +2,8 @@
 
 #include "config-setup.h"
 
+
+
 namespace ic_setup = ibsimu_client::setup;
 
 bound_type_t ic_setup::bound_type_m(const bound_type_string_t &s) 
@@ -160,8 +162,19 @@ void ic_setup::dxfsolids_m(Geometry &geometry_o, bpo::variables_map &vm_o, std::
 
 
     MyDXFFile *dxffile_op = new MyDXFFile;
-    dxffile_op->set_warning_level( 1 );
-    dxffile_op->read( filename_o);
+    dxffile_op->set_warning_level( 3 );
+
+    try {
+        dxffile_op->read( filename_o);
+    } catch (Error &e) {
+        std::string &message = e.get_error_message();
+        std::cout << std::endl;
+        std::cout << "Error in .dxf file: " << message;
+        std::cout << std::endl;
+         
+        //e.print_error_message(std::cout);
+    }
+    
 
 
 
