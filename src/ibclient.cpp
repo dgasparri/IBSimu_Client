@@ -105,10 +105,25 @@ int main(int argc, char *argv[])
                 (params_o),
                 diagnostics_file_o
             );
+        
+        double geometry_origo[3] = {
+            geometry_op>origo[0],
+            geometry_op->origo[1],
+            geometry_op->origo[2]
+        };
+        double geometry_max[3] = {
+            geometry_op>max[0],
+            geometry_op->max[1],
+            geometry_op->max[2]
+        };
+
         ic_pd::loop_end_optional_m_t diagnostics_loop_end_m = 
             ic_pd::particle_diagnostics_factory_m(
                 (params_o),
-                diagnostics_file_o
+                diagnostics_file_o,
+                geometry_origo,
+                geometry_max,
+                geometry_op->geom_mode()
             );
 
 

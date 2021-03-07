@@ -29,9 +29,13 @@
 #define PD_GRID_N 10 // grid NxM, was 100x100
 #define PD_GRID_M 10
 #define PD_AXIS_X "AXIS_X"
+#define PD_AXIS_X_R_RP "AXIS_X_R_RP"
+#define PD_AXIS_X_R_AP "AXIS_X_R_AP"
+#define PD_AXIS_X_Z_ZP "AXIS_X_Z_ZP"
 #define PD_AXIS_Y "AXIX_Y"
 #define PD_AXIS_Z "AXIS_Z"
 #define PD_AXIS_R "AXIS_R"
+#define PD_AXIS_R_X_XP "AXIS_R_X_XP"
 #define PD_ALL "ALL"
 #define PD_ALPHA "ALPHA"
 #define PD_ANGLE "ANGLE"
@@ -83,6 +87,12 @@ namespace ibsimu_client::particle_diagnostics {
         )> loop_end_m_t;
 
     typedef std::optional<loop_end_m_t> loop_end_optional_m_t;
+
+    std::optional<std::vector<trajectory_diagnostic_e>>
+        particle_diagnostics_trajectories_m(std::string &diag_axis_str);
+    
+     std::optional<coordinate_axis_e>
+        ic_pd::particle_diagnostics_axis_m(std::string &diag_axis_str);
 
     loop_end_optional_m_t particle_diagnostics_factory_m(
         bpo::variables_map &params_op,
