@@ -26,6 +26,55 @@
 	\item v [m/s] from E and m
 \end{itemize}
 
+\section{Setup}
+\subsection{Geometry}
+
+Relevant IBSimu files:
+\begin{itemize}
+	\item geometry.hpp 
+	\item geometry.cpp
+	\item mesh.hpp
+	\item mesh.cpp
+\end{itemize}
+
+
+
+Relevant client files:
+\begin{itemize}
+	\item configuration-setup.hpp
+	\item configuration-setup.cpp
+\end{itemize}
+
+
+Parameters:
+\begin{itemize}
+	\item mesh-cell-size-h [eg. 0.5e-4]
+	\item origin-x 
+	\item origin-y
+	\item origin-z
+	\item geometry-start-x [UNUSED]
+	\item geometry-start-y [UNUSED]
+	\item geometry-start-z [UNUSED]
+	\item geometry-size-x
+	\item geometry-size-y
+	\item geometry-size-z
+\end{itemize}
+
+The class Geometry creates the mesh of the simulation starting from the CAD files and/or function definitions.
+
+The parameters origin-x, origin-y and origin-z are used to move the reference frame relative to the bbox in the DXF file [see mesh.hpp line 70-73, mesh.cpp line 60].
+
+The physical length/height/depth of the simulation is size-x/y/z * mesh-cell-size. Specifically:
+
+$$size-x = (int)floor(geometry-size-x / mesh-cell-size-h) + 1 $$
+$$x_{max} = origin-x + mesh-cell-size-h * size-x$$
+
+
+
+
+
+
+
 \section{ParticleDataBaseCylImp::add\_2d\_beam\_with\_energy}
 
 Function ParticleDataBaseCylImp::add\_2d\_beam\_with\_energy (file: \textit{particledatabaseimp.cpp}, line: 968) is used to add a beam of N particles with average energy E to a cylindrical geometry.
@@ -74,6 +123,49 @@ The relevant functions are in files gtkparticlediagdialog.cpp (the GTK dialog fi
 \end{itemize}
 
 
+Trajectories are obtained from ParticleDataBase::trajectories\_at\_plane() that calls ParticleDataBaseImp::trajectories\_at\_plane(). It requires the axis (X, Y, Z, R) and the distance from origin. It returns a vector of particle point objects ParticleP<PP> (either ParticleP2D, ParticlePCyl, or ParticleP3D), each particle carrying its information about position and momentum
+
+q is the direction normal to the diagnostic plane
+
+DIAG\_X: x position [m]
+DIAG\_R: r position [m]
+
+
+
+DIAG\_RP: $\frac{v_r}{v_q}$
+
+DIAG\_AP: $\frac{v_\theta}{v_q}$
+
+$$v_\theta=r\frac{d\theta}{dt}$$
+
+Emittance:
+\begin{itemize}
+	\item X axis, r-r': DIAG\_R (r position), DIAG\_RP ($\frac{v_r}{v_q}$)
+	\item X axis, r-a': DIAG\_R (r position), DIAG\_AP ($\frac{v_\theta}{v_q}$)
+	\item X axis, z-z': using DIAG\_R, DIAG\_RP, DIAG\_AP and EmittanceConv class instead
+\end{itemize}
+
+
+The diagnostic data are obtained from the Emittance class. For Cylindrical coordinates, the class EmittanceConv converts to (x,x') equivalent emittance from the following data:
+
+\begin{itemize}
+	\item r (radius)
+	\item rp (radial angle)
+	\item ap (skew angle)
+	\item I (current)
+\end{itemize}
+
+It builds (x,x') data in a grid array of size n by m. Here the skew angle is $ r\omega/v_z $, where $ v_z $ is the velocity to the direction of beam propagation. 
+
+
+
+This description from class reference list is not clear: 
+
+The conversion is done by rotating each trajectory diagnostic point around the axis in rotn steps (defaults to 100). The output grid size can be forced by setting (xmin,xpmin,xmax,xpmax) variables, otherwise the grid is autotomatically sized to fit all data.
+
+The emittance statistics is built using original data and not the gridded data for maximized precision.
+
+
 \section{ToDo}
 
 Particle Types
@@ -104,7 +196,7 @@ Intersection points are appended to vector intsc.
 Int TrajectoryRep1D::solve()
 Returns solutions found [ Linear [0,1], Quadratic[0,1,2], Cubic [0,1,2,3]]
 
-
+IBSimu DXF bug in mydxffile.cpp \#define CODE\_STRING(x) code (x) == 101 is not included as it is a later standard in DXF file.
 
 
 
