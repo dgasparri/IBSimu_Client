@@ -167,7 +167,7 @@ void ic_setup::dxfsolids_m(Geometry &geometry_o, bpo::variables_map &vm_o, std::
     try {
         dxffile_op->read( filename_o);
     } catch (Error &e) {
-        std::string &message = e.get_error_message();
+        const std::string &message = e.get_error_message();
         std::cout << std::endl;
         std::cout << "Error in .dxf file: " << message;
         std::cout << std::endl;
