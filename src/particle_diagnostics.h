@@ -92,16 +92,14 @@ namespace ibsimu_client::particle_diagnostics {
         particle_diagnostics_trajectories_m(std::string &diag_axis_str);
     
      std::optional<coordinate_axis_e>
-        ic_pd::particle_diagnostics_axis_m(std::string &diag_axis_str);
+        particle_diagnostics_axis_m(std::string &diag_axis_str);
 
     loop_end_optional_m_t particle_diagnostics_factory_m(
         bpo::variables_map &params_op,
-        std::ofstream &diagnostics_stream_o
-        /*
-        const bool display_console,
-        Geometry& geometry_o,
-        MeshVectorField& bfield_o
-        */
+        std::ofstream &diagnostics_stream_o,
+        double *geometry_origo,
+        double *geometry_max,
+        geom_mode_e geometry_mode
         );
 
     typedef std::function<void(int)> loop_start_m_t;

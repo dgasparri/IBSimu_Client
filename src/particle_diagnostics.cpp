@@ -123,48 +123,54 @@ ic_pd::loop_start_m_t
 std::optional<coordinate_axis_e>
     ic_pd::particle_diagnostics_axis_m(std::string &diag_axis_str)
 {
-    if(axis == PD_AXIS_X_R_RP || axis == PD_AXIS_X_R_AP || axis == PD_AXIS_X_Z_ZP)
+    if(diag_axis_str == PD_AXIS_X_R_RP || diag_axis_str == PD_AXIS_X_R_AP || diag_axis_str == PD_AXIS_X_Z_ZP)
         return AXIS_X;
-    if(axis == PD_AXIS_Y) 
+    if(diag_axis_str == PD_AXIS_Y) 
         return AXIS_Y;
-    if(axis == PD_AXIS_Z) 
+    if(diag_axis_str == PD_AXIS_Z) 
         return AXIS_Z;
-    if(axis == PD_AXIS_R_X_XP) 
+    if(diag_axis_str == PD_AXIS_R_X_XP) 
         return AXIS_R;
     return std::nullopt;
 }
 
 
 std::optional<std::vector<trajectory_diagnostic_e>>
-    &ic_pd::particle_diagnostics_trajectories_m(std::string &diag_axis_str)
+    ic_pd::particle_diagnostics_trajectories_m(std::string &diag_axis_str)
 {
     std::vector<trajectory_diagnostic_e> diag;
-    if(axis == PD_AXIS_X_R_RP)  {
+    if(diag_axis_str == PD_AXIS_X_R_RP)  {
         diag.push_back( DIAG_R );
         diag.push_back( DIAG_RP );
         diag.push_back( DIAG_NONE );
         diag.push_back( DIAG_CURR );
+        return diag;
     }
-    else if (axis == PD_AXIS_X_R_AP) {
+    
+    if (diag_axis_str == PD_AXIS_X_R_AP) {
         diag.push_back( DIAG_R );
         diag.push_back( DIAG_AP );
         diag.push_back( DIAG_NONE );
         diag.push_back( DIAG_CURR );
-
+        return diag;
     } 
-    else if (axis == PD_AXIS_X_Z_ZP) {
+
+    if (diag_axis_str == PD_AXIS_X_Z_ZP) {
         //Emittance conv
         diag.push_back( DIAG_R );
         diag.push_back( DIAG_RP );
         diag.push_back( DIAG_AP );
         diag.push_back( DIAG_CURR );
+        return diag;
     }
-    else if(axis == PD_AXIS_R_X_XP) 
+    
+    if(diag_axis_str == PD_AXIS_R_X_XP) 
     {
         diag.push_back( DIAG_X );
         diag.push_back( DIAG_XP );
         diag.push_back( DIAG_NONE );
         diag.push_back( DIAG_CURR );
+        return diag;
     }
     return std::nullopt;
 }
@@ -175,9 +181,9 @@ std::optional<std::vector<trajectory_diagnostic_e>>
 ic_pd::loop_end_optional_m_t
     ic_pd::particle_diagnostics_factory_m(
         bpo::variables_map& params_o,
-        std::ofstream& diagnostics_stream_o.
-        double origo[3],
-        double max[3],
+        std::ofstream& diagnostics_stream_o,
+        double *geometry_origo,
+        double *geometry_max,
         geom_mode_e geometry_mode
    )
 {
@@ -221,7 +227,7 @@ ic_pd::loop_end_optional_m_t
     }
 
     //std::unordered_set<std::string> axes = {PD_AXIS_X, PD_AXIS_Y, PD_AXIS_Z, PD_AXIS_R};
-    std::vector<str::vector<trajectory_diagnostic_e>> diag_trajectories;
+    std::vector<std::vector<trajectory_diagnostic_e>> diag_trajectories;
     std::vector<coordinate_axis_e> diag_axis;
     std::vector<bool> use_emittanceconv;
     for(std::string axis: (*diag_axis_str))
@@ -243,9 +249,9 @@ ic_pd::loop_end_optional_m_t
             return std::nullopt;
         }
 
-        diag_axis.eplace_back(*axis_opt)
-        diag_trajectories.emplace_back(*trajectories_op)
-        use_emittanceconv.emplace_back(axis == PD_AXIS_X_Z_ZP)
+        diag_axis.emplace_back(*axis_opt);
+        diag_trajectories.emplace_back(*trajectories_opt);
+        use_emittanceconv.emplace_back(axis == PD_AXIS_X_Z_ZP);
     }
 
     //TODO: Check diag_plane_coordinate against geometry_o.max(0), 
@@ -285,8 +291,8 @@ ic_pd::loop_end_optional_m_t
         use_emittanceconv,
         diag_plane_coordinate,
         diag_extr_params,
-        geometry_origo[3],
-        geometry_max[3],
+        geometry_origo,
+        geometry_max,
         geometry_mode
         ](
             int loop_n,
@@ -324,26 +330,26 @@ ic_pd::loop_end_optional_m_t
                     
                     // Mirror in x-direction
                     if( mirror[0] ) {
-                        tdata->mirror( AXIS_X, geometry_origo[0] );
+                        tdata.mirror( AXIS_X, geometry_origo[0] );
                     } else if( mirror[1] ) {
-                        tdata->mirror( AXIS_X, geometry_max[0] );
+                        tdata.mirror( AXIS_X, geometry_max[0] );
                     } else 
                     // Mirror in y-direction, forced if cylindrical geometry
                     if( geometry_mode == MODE_CYL || mirror[2] ) {
-                        tdata->mirror( AXIS_Y, geometry_origo[1] );
+                        tdata.mirror( AXIS_Y, geometry_origo[1] );
                     } else if( mirror[3] ) {
-                        tdata->mirror( AXIS_Y, geometry_max[1] );
+                        tdata.mirror( AXIS_Y, geometry_max[1] );
                     } else
                     // Mirror in z-direction
                     if( mirror[4] ) {
-                        tdata->mirror( AXIS_Z, geometry_origo[2] );
+                        tdata.mirror( AXIS_Z, geometry_origo[2] );
                     } else if( mirror[5] ) {
-                        tdata->mirror( AXIS_Z, geometry_max[2] );
+                        tdata.mirror( AXIS_Z, geometry_max[2] );
                     }
                     
-                    emit = new Emittance(   (*_tdata)(0).data(), 
-				                            (*_tdata)(1).data(), 
-				                            (*_tdata)(2).data() );
+                    emit = new Emittance(tdata(0).data(), 
+				                         tdata(1).data(), 
+				                         tdata(2).data() );
 
 
                 } else {
@@ -366,31 +372,31 @@ ic_pd::loop_end_optional_m_t
                 for(auto param: diag_extr_params[i]) {
                     switch(ic_pd::hash_parameters(param)) {
                         case ic_pd::eAlpha:
-                            diagnostics_stream_o << "," << emit.alpha();
+                            diagnostics_stream_o << "," << emit->alpha();
                             break;
                         case ic_pd::eBeta:
-                            diagnostics_stream_o << "," << emit.beta();
+                            diagnostics_stream_o << "," << emit->beta();
                             break;
                         case ic_pd::eGamma:
-                            diagnostics_stream_o << "," << emit.gamma();
+                            diagnostics_stream_o << "," << emit->gamma();
                             break;
                         case ic_pd::eEpsilon:
-                            diagnostics_stream_o << "," << emit.epsilon();
+                            diagnostics_stream_o << "," << emit->epsilon();
                             break;
                         case ic_pd::eAngle:
-                            diagnostics_stream_o << "," << emit.angle();
+                            diagnostics_stream_o << "," << emit->angle();
                             break;
                         case ic_pd::eRmajor:
-                            diagnostics_stream_o << "," << emit.rmajor();
+                            diagnostics_stream_o << "," << emit->rmajor();
                             break;
                         case ic_pd::eRminor:
-                            diagnostics_stream_o << "," << emit.rminor();
+                            diagnostics_stream_o << "," << emit->rminor();
                             break;
                         case ic_pd::eXaverage:
-                            diagnostics_stream_o << "," << emit.xave();
+                            diagnostics_stream_o << "," << emit->xave();
                             break;
                         case ic_pd::eXpave:
-                            diagnostics_stream_o << "," << emit.xpave();
+                            diagnostics_stream_o << "," << emit->xpave();
                             break;
                         case ic_pd::eItot:
                             {
@@ -412,7 +418,6 @@ ic_pd::loop_end_optional_m_t
                     }
                 }
 
-                diag.clear();
                 tdata.clear();
             }
             diagnostics_stream_o << std::endl;
