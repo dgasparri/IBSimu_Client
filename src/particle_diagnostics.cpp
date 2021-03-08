@@ -407,7 +407,7 @@ ic_pd::loop_end_optional_m_t
                                 if(use_emittanceconv[i])
                                     column = 3;
                                 else
-                                    column = 2;
+                                    column = 2; 
                                 const std::vector<double>& IQ_end_o = tdata(column).data();
                                 const double iTot = std::reduce(std::execution::par, IQ_end_o.cbegin(),IQ_end_o.cend());
                                 diagnostics_stream_o << "," << iTot;
