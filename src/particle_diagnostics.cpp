@@ -415,7 +415,7 @@ ic_pd::loop_end_optional_m_t
                             break;
                         case ic_pd::eNparticles:
                             {
-                                const size_t num_traj_end = tdata(3).size();
+                                const size_t num_traj_end = tdata(0).size();
                                 diagnostics_stream_o << "," << num_traj_end;
                             }
                             break;
