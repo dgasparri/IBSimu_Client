@@ -403,7 +403,12 @@ ic_pd::loop_end_optional_m_t
                             break;
                         case ic_pd::eItot:
                             {
-                                const std::vector<double>& IQ_end_o = tdata(3).data();
+                                int column;
+                                if(use_emittanceconv[i])
+                                    column = 3;
+                                else
+                                    column = 2;
+                                const std::vector<double>& IQ_end_o = tdata(column).data();
                                 const double iTot = std::reduce(std::execution::par, IQ_end_o.cbegin(),IQ_end_o.cend());
                                 diagnostics_stream_o << "," << iTot;
                             }
