@@ -142,7 +142,7 @@ std::optional<std::vector<trajectory_diagnostic_e>>
     if(diag_axis_str == PD_AXIS_X_R_RP)  {
         diag.push_back( DIAG_R );
         diag.push_back( DIAG_RP );
-        diag.push_back( DIAG_NONE );
+        // diag.push_back( DIAG_NONE );
         diag.push_back( DIAG_CURR );
         return diag;
     }
@@ -299,6 +299,9 @@ ic_pd::loop_end_optional_m_t
             ParticleDataBase& pdb_o
         ) {
 
+            //No diagnostics at loop zero - risk of segmentation fault
+            if(!loop_n)
+                return; 
             //No extraction to do, no need to load data
             std::size_t extractions = diag_axis.size();
             if(!extractions)
