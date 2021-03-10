@@ -34,6 +34,7 @@ cd ibsimu_lib
 make clean
 make
 sudo make install
+cd ..
 
 
 INSTALLING IBSIMU CLIENT
@@ -45,11 +46,15 @@ tar --bzip2 -xf boost_1_75_0.tar.bz2
 cd boost_1_75_0
 ./bootstrap.sh 
 sudo ./b2 install
+cd ..
 sudo ldconfig
 
 git clone https://github.com/dgasparri/IBSimu_Client.git ibsimu_client
 cd ibsimu_client
-./make
+mkdir bin
+mkdir bin/build
+make clean
+make
 
 
 Amazon images:
@@ -65,3 +70,37 @@ i-01389ecbc415b53fa
 default access to server: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/connection-prereqs.html#connection-prereqs-get-info-about-instance
 
 default username: ubuntu
+
+git clone https://github.com/dgasparri/infn-lnl-ibsimu.git lnl-runs
+
+
+Bisogna fare git di ibsimu cleaned debugged
+
+Usata instanza c5d.9xlarge
+
+Per montare l'hard disk ssd:
+
+parted -l
+sudo parted /dev/nvme1n1
+dentro:
+ mklabel gpt (crea partizione)
+ print (mostra la tabella vuota)
+ mkpart primary 0 -1s 
+
+Maggiori info a: https://opensource.com/article/18/6/how-partition-disk-linux
+# parted /dev/sdx -a opt mkpart primary 0 4G
+Warning: The resulting partition is not properly aligned for best performance: 1s % 2048s != 0s
+Ignore/Cancel? C                                                          
+# parted /dev/sdx -a opt mkpart primary 2048s 4G
+
+Formatting hard drive:
+  lsblk -f
+  sudo mkfs.ext4 -L myDrive /dev/nvme1n1p1
+  lsblk -f
+
+ Create a mount point by entering:
+
+sudo mkdir -p [mountpoint]
+2. After that, mount the partition by using the following command:
+
+sudo mount -t auto /dev/sdb1 [mountpoint]
