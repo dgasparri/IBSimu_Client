@@ -403,19 +403,14 @@ ic_pd::loop_end_optional_m_t
                             break;
                         case ic_pd::eItot:
                             {
-                                int column;
-                                if(use_emittanceconv[i])
-                                    column = 3;
-                                else
-                                    column = 2; 
-                                const std::vector<double>& IQ_end_o = tdata(column).data();
+                                const std::vector<double>& IQ_end_o = tdata(tdata.diag_size()-1).data();
                                 const double iTot = std::reduce(std::execution::par, IQ_end_o.cbegin(),IQ_end_o.cend());
                                 diagnostics_stream_o << "," << iTot;
                             }
                             break;
                         case ic_pd::eNparticles:
                             {
-                                const size_t num_traj_end = tdata(0).size();
+                                const size_t num_traj_end = tdata(tdata.diag_size()-1).size();
                                 diagnostics_stream_o << "," << num_traj_end;
                             }
                             break;
