@@ -71,7 +71,7 @@ default access to server: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/co
 
 default username: ubuntu
 
-git clone https://github.com/dgasparri/infn-lnl-ibsimu.git lnl-runs
+git clone https://github.com/dgasparri/infn-lnl-ibsimu.git 
 
 
 Bisogna fare git di ibsimu cleaned debugged
@@ -80,12 +80,20 @@ Usata instanza c5d.9xlarge
 
 Per montare l'hard disk ssd:
 
+Dischi:
+* nvme0n1 - disco base
+* nvme1n1 - disco SSD 1
+* nvme2n1 - disco SSD 2
+
+
 parted -l
 sudo parted /dev/nvme1n1
 dentro:
+ print
  mklabel gpt (crea partizione)
  print (mostra la tabella vuota)
- mkpart primary 0 -1s 
+ mkpart primary 0 -1s
+ mkpart primary 2048s -1s 
 
 Maggiori info a: https://opensource.com/article/18/6/how-partition-disk-linux
 # parted /dev/sdx -a opt mkpart primary 0 4G
@@ -95,7 +103,7 @@ Ignore/Cancel? C
 
 Formatting hard drive:
   lsblk -f
-  sudo mkfs.ext4 -L myDrive /dev/nvme1n1p1
+  sudo mkfs.ext4 -L ssd1 /dev/nvme1n1p1
   lsblk -f
 
  Create a mount point by entering:
@@ -104,3 +112,5 @@ sudo mkdir -p [mountpoint]
 2. After that, mount the partition by using the following command:
 
 sudo mount -t auto /dev/sdb1 [mountpoint]
+sudo mount -t auto /dev/nvme1n1p1 lnl-runs
+sudo chown -R ubuntu:ubuntu lnl-runs
