@@ -113,6 +113,16 @@ and
 
 with $rnd_{0}$, $rnd_{1}$ and $rnd_{2}$ normally distributed random variables.
 
+
+\section{Iteration}
+
+The method ParticleDataBasePPImp::iterate\_trajectories (inherits ParticleDataBaseImp, file: particledatabaseimp.hpp::641) outputs the message "Using non-relativistic iterator", clears the scharge, creates a iterators vector of size equal to the set thread, populates it with new instances of ParticleIterator<PP> and waits for the iteration to be finished. Then calls scharge\_finalize\_linear (file:scharge.cpp:149) Finally it publishes the particle hisories ("Particle histories").
+
+scharge\_finalize\_liear prints "Finalizing space charge density map (LINEAR method)"
+
+The core of the iteration isinside the ParticleIterator<PP>
+
+
 \section{Particle Diagnostic}
 
 The relevant functions are in files gtkparticlediagdialog.cpp (the GTK dialog file) and particlediagplot.cpp (does the actual plotting). It has the following methods:
