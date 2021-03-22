@@ -29,8 +29,8 @@ all: $(OBJECTS) src/datatype.h
 	#$(CC) $(CXXFLAGS) -c -o $(OBJDIR)/simulation.o $(SRCDIR)/simulation.hpp
 	$(CC) $(CXXFLAGS) -c -o $(OBJDIR)/simulation.o $(SRCDIR)/ibclient.cpp
 	$(CC) -o bin/simulation $(OBJDIR)/simulation.o $(OBJECTS) $(LDFLAGS)
-	# $(CC) $(CXXFLAGS) -c -o $(OBJDIR)/analysis.o $(SRCDIR)/analysis.cpp
-	# $(CC) -o bin/analysis $(OBJDIR)/analysis.o $(OBJECTS) $(LDFLAGS)
+	$(CC) $(CXXFLAGS) -c -o $(OBJDIR)/analysis.o   $(SRCDIR)/ibclient-analysis.cpp
+	$(CC) -o bin/analysis   $(OBJDIR)/analysis.o   $(OBJECTS) $(LDFLAGS)
 
 # alla fine 
 
