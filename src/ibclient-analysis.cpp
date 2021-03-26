@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
                 f_out << loc[2] << ",";
                 f_out << vel[0] << ",";
                 f_out << vel[1] << ",";
-                f_out << vel[2] << ",";
+                f_out << vel[2];
                 f_out << std::endl;
             }
             f_out.close();
