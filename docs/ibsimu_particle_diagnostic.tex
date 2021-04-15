@@ -1,6 +1,7 @@
 \documentclass[12pt,a4paper]{article}
 \usepackage{color}
 \usepackage{parskip}% http://ctan.org/pkg/parskip
+\usepackage{graphicx} 
 
 % \setlength{\parindent}{0pt}
 
@@ -63,6 +64,28 @@ Parameters:
 The class Geometry creates the mesh of the simulation starting from the CAD files and/or function definitions.
 
 The parameters origin-x, origin-y and origin-z are used to move the reference frame relative to the bbox in the DXF file [see mesh.hpp line 70-73, mesh.cpp line 60].
+
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{"assets/geometry_origin_x_zero.png"}
+	\caption[Origin X = 0]{Geometry DXF starting at -10e-3 m. Setting origin-x = 0 mm}
+	\label{fig:esempio-origin-xzero}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{"assets/geometry_origin_x_minus10mm.png"}
+	\caption[Origin X = 0]{Geometry DXF starting at -10e-3 m. Setting origin-x = -10 mm}
+	\label{fig:esempio-origin-xzero}
+\end{figure}
+
+
+IBSimu does not render the space before the origin-x, so also moving the geomtery with the mouse would not show the part before the origin-x.
+
+NB: Non si capisce perché non calcoli il campo elettrico prima dello zero della geometria. Avevo la geometria traslata a -10mm, con zero la punta dell'elettrodo di estrazione. Tra [-10mm;0] l'epot era = a Vplasma
+
+
 
 The physical length/height/depth of the simulation is size-x/y/z * mesh-cell-size. Specifically:
 
