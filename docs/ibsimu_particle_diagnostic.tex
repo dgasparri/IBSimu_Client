@@ -123,6 +123,56 @@ scharge\_finalize\_liear prints "Finalizing space charge density map (LINEAR met
 The core of the iteration isinside the ParticleIterator<PP>
 
 
+Scheduler class 
+
+Scheduler is templated with Solver, Problem and Error classes. 
+
+From ParticleDatabasePPImp (particledatabaseimp.hpp:291):
+
+std::vector<Particle<PP> *>                        _particles;
+Scheduler<ParticleIterator<PP> (as Solver), Particle<PP> (as Problem), Error (as Error)> _scheduler;
+
+
+
+Scheduler class requires the Solver class ParticleIterator<PP> to provide an operator
+
+  void ParticleIterator<PP>::operator()( Problem *p, int32_t pi )
+  
+to solve problem p with index location pi. (particleiterator.hpp:1258)
+
+The operator calls the PP::get_derivatives( 0.0, &x[1], dxdt, (void *)&_pidata ); function to 
+fill dxdt (particleiterator.hpp:1298)
+
+double dxdt[PP::size()-1];
+
+, then 
+
+double dt = ParticleIterator<PP>calculate_dt( x, dxdt );
+
+to get initial dt.
+
+
+
+
+
+
+Error class has to have a default constructor. Scheduler catches
+the errors of this type from the working threads and saves caught
+errors in a container. If an error is caught, all the working
+threads are interrupted and problem solving is finished. The
+scheduler does indicate the error state by returning false from
+finish(). Error state can also be queried with is_error(). Errors
+can be fetched from the internal containers with get_errors().
+The %Scheduler can be used for static and dynamic problems. All
+threads can add problems. The problem vector is a shared resource
+so it must be protected with lock_mutex() and unlock_mutex().
+
+Parallel processing is started with run() function and the end of
+processing can be waited with finish().
+
+
+
+
 \section{Particle Diagnostic}
 
 The relevant functions are in files gtkparticlediagdialog.cpp (the GTK dialog file) and particlediagplot.cpp (does the actual plotting). It has the following methods:
