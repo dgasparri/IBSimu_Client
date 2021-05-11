@@ -2,6 +2,7 @@
 \usepackage{color}
 \usepackage{parskip}% http://ctan.org/pkg/parskip
 \usepackage{graphicx} 
+\usepackage{hyperref}
 
 % \setlength{\parindent}{0pt}
 
@@ -139,11 +140,12 @@ with $rnd_{0}$, $rnd_{1}$ and $rnd_{2}$ normally distributed random variables.
 
 \section{Iteration}
 
-The method ParticleDataBasePPImp::iterate\_trajectories (inherits ParticleDataBaseImp, file: particledatabaseimp.hpp::641) outputs the message "Using non-relativistic iterator", clears the scharge, creates a iterators vector of size equal to the set thread, populates it with new instances of ParticleIterator<PP> and waits for the iteration to be finished. Then calls scharge\_finalize\_linear (file:scharge.cpp:149) Finally it publishes the particle hisories ("Particle histories").
+The method ParticleDataBasePPImp::iterate\_trajectories (inherits ParticleDataBaseImp, file: particledatabaseimp.hpp::641) outputs the message "Using non-relativistic iterator", clears the scharge, creates a iterators vector of size equal to the set thread, populates it with new instances of ParticleIterator<  PP>  and waits for the iteration to be finished. Then calls scharge\_finalize\_linear (file:scharge.cpp:149) Finally it publishes the particle hisories ("Particle histories").
 
 scharge\_finalize\_liear prints "Finalizing space charge density map (LINEAR method)"
 
 The core of the iteration isinside the ParticleIterator<PP>
+
 
 
 The method ParticleDataBasePPImp::iterate\_trajectories (inherits ParticleDataBaseImp, file: particledatabaseimp.hpp::641) outputs the message "Using non-relativistic iterator", clears the scharge, creates a iterators vector of size equal to the set thread, populates it with new instances of ParticleIterator<PP> and waits for the iteration to be finished. Then calls scharge\_finalize\_linear (file:scharge.cpp:149) Finally it publishes the particle hisories ("Particle histories").
@@ -159,35 +161,62 @@ Scheduler is templated with Solver, Problem and Error classes.
 
 From ParticleDatabasePPImp (particledatabaseimp.hpp:291):
 
-std::vector<Particle<PP> *>                        _particles;
-Scheduler<ParticleIterator<PP> (as Solver), Particle<PP> (as Problem), Error (as Error)> _scheduler;
+std::vector<Particle<PP> *>                        \_particles;
+Scheduler<ParticleIterator<PP> (as Solver), Particle<PP> (as Problem), Error (as Error)> \_scheduler;
 
 
 
 Scheduler class requires the Solver class ParticleIterator<PP> to provide an operator
 
-  void ParticleIterator<PP>::operator()( Problem *p, int32_t pi )
+  void ParticleIterator<PP>::operator()( Problem *p, int32\_t pi )
+
+or, as implemented, Problem is Particle<PP>
+
+ void ParticleIterator<PP>::operator()(Particle<PP> *particle, uint32\_t pi)
   
 to solve problem p with index location pi. (particleiterator.hpp:1258)
 
-The operator calls the PP::get_derivatives( 0.0, &x[1], dxdt, (void *)&_pidata ); function to 
-fill dxdt (particleiterator.hpp:1298)
-
-
-
-
+The operator calls the PP::get\_derivatives( 0.0, \&x[1], dxdt, (void *)\&\_pidata ); function to 
+fill dxdt (particleiterator.hpp:1298).
 
 double dxdt[PP::size()-1];
 
+For the ParticlePCyl::get\_derivatives(...) function, documentation reports:
+
+"Returns time derivatives dxdt of coordinates at time t and coordinates x = (x,vx,r,vr,w) for one particle.
+
+The calculation of particle trajectory is done by integrating the Lorentz equation in a form of a set of ordinary differential equations. In the case of cylindrical coordinates the set is:
+
+$$\frac{dx}{dt} = v_{x}$$
+
+$$\frac{dr}{dt} = v_{r}$$
+
+$$\frac{dv_{x}}{dt} = a_{x} = \frac{q}{m}(E_{x}+v_{r}B_{\theta}-v_{\theta}B_{r})$$
+
+$$\frac{dv_{r}}{dt} = a_{r} + r\left ( \frac{d\theta}{d}\right )^{2} = \frac{q}{m}(E_{y}+v_{\theta}B{x}-v_{x}B_{\theta})+r\left ( \frac{d\theta}{d}\right )^{2}$$
+
+$$\frac{d^{2}\theta}{dt^2} = \frac{1}{r}\left(a_{\theta}-\frac{dr}{dt}\frac{d\theta}{dt}\right) =
+ \frac{1}{r}\left(\frac{q}{m}(v_{x}B_{r}-v_{r}B_{x}) -2\frac{dr}{dt}\frac{d\theta}{dt}\right)
+$$
+
+where 
+
+$$v_{\theta} = r\frac{d\theta}{dt}$$
+
+End quote. Source: \url{http://ibsimu.sourceforge.net/manual_1_0_6/classParticlePCyl.html#adb44dff844a1af2615727a1920c18c8b}
+
+
 , then 
 
-double dt = ParticleIterator<PP>calculate_dt( x, dxdt );
+double dt = ParticleIterator<PP>calculate\_dt( x, dxdt );
 
 to get initial dt.
 
 
 
+Then the GSL odeiv functions are called to advance the particle, and the result is checked with the ParticleIterator<PP>::handle\_trajectory() function (particleiterator.hpp:1361)
 
+The bool ParticleIterator<PP>::handle\_trajectory() function searches mesh intersections between points x1 and x2 and builds ColData. Checks for collisions with solids and boundaries and sets space charge at each mesh line crossing.
 
 
 Error class has to have a default constructor. Scheduler catches
@@ -195,11 +224,11 @@ the errors of this type from the working threads and saves caught
 errors in a container. If an error is caught, all the working
 threads are interrupted and problem solving is finished. The
 scheduler does indicate the error state by returning false from
-finish(). Error state can also be queried with is_error(). Errors
-can be fetched from the internal containers with get_errors().
+finish(). Error state can also be queried with is\_error(). Errors
+can be fetched from the internal containers with get\_errors().
 The %Scheduler can be used for static and dynamic problems. All
 threads can add problems. The problem vector is a shared resource
-so it must be protected with lock_mutex() and unlock_mutex().
+so it must be protected with lock\_mutex() and unlock\_mutex().
 
 Parallel processing is started with run() function and the end of
 processing can be waited with finish().
