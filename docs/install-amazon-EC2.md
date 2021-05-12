@@ -1,5 +1,4 @@
 ---
-layout: page
 title: "Installing IBSimu Client on Amazon EC2 or Ubuntu"
 permalink: /install-amazon-EC2/
 ---

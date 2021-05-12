@@ -12,6 +12,11 @@ The client is just a convenient way to:
 * visualize the results of previous simulations
 
 
-## Documentation
+# Documentation
 
-IBSimu Client has a [documentation site]() with 
+IBSimu Client has a [documentation site](https://dgasparri.github.io/IBSimu_Client/) with an installationg guide, examples on how to use the package and references to its commands and parameters.
+
+
+# License
+
+GNU GENERAL PUBLIC LICENSE 3.0

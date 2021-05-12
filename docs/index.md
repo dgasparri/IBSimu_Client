@@ -44,19 +44,19 @@ The client also requires the Boost C++ library.
 
 
 
-Latex trial 1:
+Latex trial 1 - no escaping:
 
 \[\frac{dx}{dt} \]
 
-Latex trial 2
+Latex trial 2 - escaping
 
 \\[\frac{dx}{dt} \\]
 
-Latex trial 1:
+Latex trial 1 - dollar sign:
 
 $$\frac{dx}{dt}$$
 
-Latex trial 1:
+Latex trial 1 - raw liquid:
 
 {% raw %}
 
