@@ -1,1 +1,17 @@
 theme: jekyll-theme-slate
+
+# Site variables
+full_url: https://dgasparri.github.io/IBSimu_Client
+# feed_url: feed.xml
+
+tagline: Client for the IBSimu Ion Beam Simulator library for plasma physics
+title: IBSimu Client
+
+# Used by Jekyll SEO Tag
+description: Client for the IBSimu Ion Beam Simulator library for plasma physics
+url: https://dgasparri.github.io/IBSimu_Client
+
+#  email: 
+author:
+  name: Duccio Marco Gasparri
+  github: dgasparri
