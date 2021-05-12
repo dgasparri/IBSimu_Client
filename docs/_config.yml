@@ -1,39 +1,30 @@
 theme: jekyll-theme-slate
-# for info: https://github.com/pages-themes/slate
-
 markdown: kramdown
+
+# for info: https://github.com/pages-themes/slate
+# markdown parser: https://kramdown.gettalong.org/parser/kramdown.html
+# Latex: MathJax https://www.mathjax.org/
+
+
 
 # Used by Jekyll SEO Tag
 title: IBSimu Client
 description: Client for the IBSimu Ion Beam Simulator library for plasma physics
-# name: IBSimu Client
-# tagline: Client for the IBSimu Ion Beam Simulator library for plasma physics
-
 url: https://dgasparri.github.io/IBSimu_Client
-#  email: 
 author:
   name: Duccio Marco Gasparri
   github: dgasparri
+twitter:
+  creator: @dgasparri
 
 
+
+# Site specifics
 
 show_downloads: true
-
 github:
   owner_name: Duccio Gasparri (dgasparri)
-
-
-# Site variables
-# full_url: https://dgasparri.github.io/IBSimu_Client
-# feed_url: feed.xml
-
-
-
-
-
-
-# incremental: false
-highlighter: rouge
+# highlighter: rouge
 # gist:
 #   noscript: false
 kramdown:
