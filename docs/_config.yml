@@ -1,9 +1,11 @@
 theme: jekyll-theme-slate
+markdown: kramdown
 
 # Site variables
 full_url: https://dgasparri.github.io/IBSimu_Client
 # feed_url: feed.xml
 
+name: IBSimu Client
 tagline: Client for the IBSimu Ion Beam Simulator library for plasma physics
 title: IBSimu Client
 
