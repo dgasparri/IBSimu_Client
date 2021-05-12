@@ -15,3 +15,12 @@ url: https://dgasparri.github.io/IBSimu_Client
 author:
   name: Duccio Marco Gasparri
   github: dgasparri
+
+
+incremental: false
+highlighter: rouge
+gist:
+  noscript: false
+kramdown:
+  math_engine: mathjax
+  syntax_highlighter: rouge
