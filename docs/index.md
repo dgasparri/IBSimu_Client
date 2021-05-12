@@ -36,32 +36,31 @@ Before installing the client, you have to install IBSimu and all of its dependen
 * libstdc++-10-dev libstdc++-10-doc  - or higher
 
 
-The client also requires the Boost C++ library.
+The Boost C++ library is also required.
+
+To install the IBSimu client, clone the repository and build it.
+
+```
+git clone https://github.com/dgasparri/IBSimu_Client.git ibsimu_client
+cd ibsimu_client
+mkdir bin
+mkdir bin/build
+make clean
+make
+```
+
+The client will be installed in the ibsimu_client directory, and the executables will be in ibsimu_client/bin .
+
+# Contact, contributions and bug fixes
+
+Contributions, suggestions and bug fixes are very welcome.
+
+I (Duccio Gasparri) am to blame for all the errors and bugs. You can contact me either via GitHub, via Twitter at @dgasparri or via email, using my first and last name at Google's famous email service. 
+
+# License
+
+IBSimu Client is provided under the GNU GENERAL PUBLIC LICENSE 3.0. 
+
+IBSimu Client is in beta version, and no guarantees are provided.
 
 
-
-
-
-
-
-Latex trial 1 - no escaping:
-
-\[\frac{dx}{dt} \]
-
-Latex trial 2 - escaping
-
-\\[\frac{dx}{dt} \\]
-
-Latex trial 1 - dollar sign:
-
-$$\frac{dx}{dt}$$
-
-Latex trial 1 - raw liquid:
-
-{% raw %}
-
-\[\frac{dx}{dt} \]
-
-{% endraw %}
-
-End text

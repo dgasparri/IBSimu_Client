@@ -16,7 +16,14 @@ The client is just a convenient way to:
 
 IBSimu Client has a [documentation site](https://dgasparri.github.io/IBSimu_Client/) with an installationg guide, examples on how to use the package and references to its commands and parameters.
 
+# Contact, contributions and bug fixes
+
+Contributions, suggestions and bug fixes are very welcome.
+
+I (Duccio Gasparri) am to blame for all the errors and bugs. You can contact me either via GitHub, via Twitter at @dgasparri or via email, using my first and last name at Google's famous email service. 
 
 # License
 
-GNU GENERAL PUBLIC LICENSE 3.0
+IBSimu Client is provided under the GNU GENERAL PUBLIC LICENSE 3.0. 
+
+IBSimu Client is in beta version, and no guarantees are provided.
